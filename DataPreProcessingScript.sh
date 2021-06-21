@@ -1,7 +1,7 @@
 #!/bin/bash
 #*********************************************************************#
 #Data Preprocessing Script by Lindsey Fenderson                       #
-#Current version 1.2.3 - March 13, 2021                               #
+#Current version 1.3.0 - May 17, 2021                                 #
 #Script for creating fastqc reports on newly sequenced data,          #
 #  (code for double checking barcodes if needed),                     #
 #  & trimming adapters with AdapterRemoval2 on UNH's Premise cluster. #
@@ -11,19 +11,21 @@
 #Process assumes that sequencing data for the same individual generated on multiple lanes in the same sequencing run has already been concatenated and that the raw sequencing files have been named informatively according to the Kovach_Lab_File_Naming_SOPs (i.e., expected input files have 4 fields separated by underscores before the R1/R2 suffix, e.g.: IndividualID_Species_SamplingLocation_CaptureDate_R#.f*q - if this is not the case, the script will likely not work as expected and you'll need to edit throughout e.g., if the field separator isn't an underscore, or if there are a different number of fields before the R1 or R2 suffix etc...
 
 ##Expected output of this program: 
-# 1.) This program will generate fastqc analysis reports on the individual R1 and R2 raw sequencing data and output them to the folder 'fastqcRawData'. For whole genome shotgun data, at this stage it is expected the fastq files will fail the AdapterContent (others?) module. (Need to list fastqc parameters used). If any of the files fail the # modules, it is suggestive of machine failure and to contact the sequencing provider to have the samples sequenced again.
-# 2.) The program then quality trims adapters and low quality termini from reads and collapses overlapping read pairs using AdapterRemoval, with the parameters used described below in line 119. Output files will have the same root name as the input fastq files, with the suffix .pair#.truncated.bz2 (where # is the number 1 or 2 for reads 1 or 2 respectively).
-# 3.) The program will then generate fastqc analysis reports on the individual R1 and R2 quality trimmed sequencing data generated in step 2 and output them to the folder 'fastqcTrimmedData'. At this stage it is expected the fastq files will now pass the AdapterContent (others?) module. It is also expected that the sequence length distribution module may be flagged, as there will be more variability in sequence length due to the collapsed reads. (Need to list fastqc parameters used). I've also added a module to generate charts and reports summarizing the read number and length distribution statistics before and after trimming, in the directory AdapterRemovalSettings.
-# 4.) Finally, the program also performs some data and file cleanup and compression to best preserve disc space; archiving all of the raw reads along with any sequencer metadata and the adapter removal settings files in $Directory_RawSequencingReads.tar.bz2, and archiving all of the fastqc output for the raw and trimmed reads in $Directory_FastQCReports.tar.bz2. These files, along with all of the pdf Adapter Removal Settings files and fastqc reports are organized into the directory "RawReads-and-SequencingPreProcessingData". Copies of the pdf output are automatically backed up to the cloud (e.g., Box) and LaTeX code written to easily import and index the pdfs into an electronic lab notebook. The script also records the fastqc and AdapterRemoval program version numbers that were used near the top of the slurm output file.
+# 1.) This program will generate fastqc analysis reports on the individual R1 and R2 raw sequencing data and output them to the folder 'fastqcRawData'.
+# 2.) The program then quality trims adapters and low quality termini from reads and collapses overlapping read pairs using AdapterRemoval2. Output files will have the same root name as the input fastq files, with the suffix .pair#.truncated.bz2 (where # is the number 1 or 2 for reads 1 or 2 respectively). This script also generates charts and reports summarizing the read number and length distribution statistics before and after trimming, in the directory AdapterRemovalSettings.
+# 3.) The program will then generate fastqc analysis reports on the individual R1 and R2 quality trimmed sequencing data generated in step 2 and output them to the folder 'fastqcTrimmedData'. 
+# 4.) The program also runs multiQC and generates summary charts and reports for the bcl2fastq data (if available), the raw and trimmed fastQC reports, and the Adapter Removal files.
+# 5.) Finally, the program also performs some data and file cleanup and compression to best preserve disc space; archiving all of the raw reads along with any sequencer metadata and the adapter removal settings files in $Directory_RawSequencingReads.tar.bz2, and archiving all of the multiQC and fastQC output for the raw and trimmed reads in $Directory_QCReports.tar.bz2. These files, along with all of the pdf Adapter Removal Settings files and QC reports are organized into the directory "RawReads-and-SequencingPreProcessingData". Copies of the pdf output are automatically backed up to the cloud (e.g., Box) and LaTeX code written to easily import and index the pdfs into an electronic lab notebook. The script also records the fastqc, multiqc and AdapterRemoval program version numbers that were used near the top of the slurm output file.
 
 ##To use this program:
-#   1.) Program assumes the raw reads are in fastq format (files can be compressed (any format, e.g., gzip or bzip2) or not) with a suffix involving fq or fastq. If not, change the suffix as needed in lines 39 and 439.
-#   2.) If desired, change the number of max Ns permitted before a read is discarded depending on the sequencing read length of your data (e.g., no more than 60% of the read could be Ns) in line 46; and the minimum number of base pair overlap required to collapse paired reads in line 48. Confirm other adapter removal parameter choices in line 120.
-#   3.) Edit "Reports" and "Stats" and/or add the directory names or add any other files as needed for the raw sequencing metadata to be archived with the raw reads as relevant for your data (e.g, "report", "statsPlate1", "MD5.txt", "Summary.txt", "checkSize.xls", "Rawdata_Readme.pdf" etc.) in lines 416-417(+). Be sure to include the absolute or relative path if for some reason the files or directories are not in the working directory.
-#   4.) In your working directory, rename your undetermined/unknown fastq files to have the same naming structure as the other files to make the script happy (i.e., the name must start with "Undetermined" (or else edit the prefix in line 40), then add 3 additional dummy fields for the "species", "sampling location" and "capture date" fields, separated by an underscore, e.g.: Undetermined_UNK_NA_S0_R1.fastq.gz)
-#   5.) This program will automatically backup to the cloud all of the output files it generates (see above), so edit your configured rclone paths and source/destination names if needed in lines 433, 435, 452, 482-484.
+#   1.) Program assumes the raw reads are in fastq format (files can be compressed (any format, e.g., gzip or bzip2) or not) with a suffix involving fq or fastq. If not, change the suffix as needed in lines 41 and 445.
+#   2.)  FASTQC parameters should be provided in associated files at the paths listed in the paramfile. Parameters used will print to the slurm stdout file. Adapter Removal parameters should also be given in the paramfile; other parameters automatically used are described below in line 133; Adapter Removal paramaters used are recorded in the output .settings files and AdapterRemovalParameters pdfs.
+#   3.) Edit "Reports" and "Stats" and/or add the directory names or add any other files as needed for the raw sequencing metadata to be archived with the raw reads as relevant for your data (e.g, "report", "statsPlate1", "MD5.txt", "Summary.txt", "checkSize.xls", "Rawdata_Readme.pdf" etc.) in lines 421-422(+). Be sure to include the absolute or relative path if for some reason the files or directories are not in the working directory.
+#   4.) In your working directory, rename your undetermined/unknown fastq files to have the same naming structure as the other files to make the script happy (i.e., the name must start with "Undetermined" (or else edit the prefix in line 41), then add 3 additional dummy fields for the "species", "sampling location" and "capture date" fields, separated by an underscore, e.g.: Undetermined_UNK_NA_S0_R1.fastq.gz)
 
-#   ***Note 1: As per our Kovach_Lab_Data_Management_User_Guide-START_HERE SOP, it is STRONGLY recommended (required?!) that the raw sequencing reads are backed up in 2 separate locations (both in the cloud and on a physical hard drive located on campus) and that the integrity of the backups is confirmed PRIOR to running this script, since the combined raw read file archive may be too large to effectively upload or download to other backup locations (or it could get corrupted in the process) and the individual raw read files will be deleted once they are added to the archive (so you should still be able to access the raw reads if you decompress and unarchive the $Directory_RawSequencingReads.tar.bz2 file, however there is always a risk of data loss if the file gets corrupted). 
+
+#   ***Note 1: As per our Kovach_Lab_Data_Management_User_Guide-START_HERE SOP, it is required that the raw sequencing reads are backed up in 2 separate locations (both in the cloud and on a physical hard drive located on campus) and that the integrity of the backups is confirmed PRIOR to running this script, since the combined raw read file archive may be too large to effectively upload or download to other backup locations (or it could get corrupted in the process) and the individual raw read files will be deleted once they are added to the archive (so you should still be able to access the raw reads if you decompress and unarchive the $Directory_RawSequencingReads.tar.bz2 file, however there is always a risk of data loss if the file gets corrupted). As noted above, the raw reads also need to be concatenated and named according to our SOPs.
+source /mnt/lustre/mel/shared/Scripts/DataPreProcessingScriptv1.3.0-Paramfile.txt
 
 module purge
 module load linuxbrew/colsa
@@ -32,6 +34,13 @@ module load linuxbrew/colsa
 echo -e "Program versions used in this script: \n"
 fastqc -v
 AdapterRemoval --version
+module purge
+module load anaconda/colsa
+conda activate multiqc-1.10.1
+multiqc --version
+module purge
+module load linuxbrew/colsa
+
 echo -e "\n"
 ##Generate FastQC reports for your sequencing data##
 mkdir ./fastqcRawData
@@ -43,13 +52,18 @@ AnyFile=$(head -n 1 AllFilesToProcess)
 ExampleRead=$(less $AnyFile |head -n 2 | tail -n 1 )
 ReadLength=$(expr length $ExampleRead)
 CycleLength=$(echo "($ReadLength - 1)" | bc)
-Maxn=$(echo "($CycleLength * 0.60)" | bc)
+Maxn=$(echo "($CycleLength * $PctNs)" | bc)
 MaxNs=$( printf "%.0f" $Maxn )
-minalignmentlength=11
+#minalignmentlength=11
 #Run fastqc
 echo -e "\n *** RUNNING FASTQC ON RAW READS *** \n\n"
+echo -e "FastQC parameter limits for raw read data:"
+while read RawFastQCFile; do
+    echo -e $RawFastQCFile
+done< $RawFastQCLimitsFile  
+
 while read AllFilesToProcess; do
-    fastqc -o fastqcRawData -t 24 -f fastq $AllFilesToProcess
+    fastqc --limits $RawFastQCLimitsFile --adapters $AdapterFile --contaminants $ContaminantFile --kmers $kmersize -o fastqcRawData -t 24 -f fastq $AllFilesToProcess
 done< AllFilesToProcess
 
 #Create a root name list
@@ -94,8 +108,8 @@ while read UniqRootName; do
     CaptureDate=$(echo $UniqRootName | cut -d'_' -f 4 )
     echo "\addcontentsline{toc}{subsubsection}{$SampleID\_$Species\_$SampleLoc\_$CaptureDate}" >> $Directory-ELNLaTeXCodeFastQCRawReads.txt
     echo "\index[sample]{$SampleID\_$Species\_$SampleLoc\_$CaptureDate\!FastQC Reports\!Raw data|(}" >> $Directory-ELNLaTeXCodeFastQCRawReads.txt
-    echo "\includepdf[pages=-,frame,scale=0.85,angle=-270,pagecommand={\pagestyle{fancy}}]{/Users/Lindsey/Box/KovachLab/Data/Sparrows/GECO/Data/SparrowRawData/$Directory/FastQCReports/fastqcRawData/$UniqRootName$Suffix1B}" >> $Directory-ELNLaTeXCodeFastQCRawReads.txt
-    echo "\includepdf[pages=-,frame,scale=0.85,angle=-270,pagecommand={\pagestyle{fancy}}]{/Users/Lindsey/Box/KovachLab/Data/Sparrows/GECO/Data/SparrowRawData/$Directory/FastQCReports/fastqcRawData/$UniqRootName$Suffix2B}" >> $Directory-ELNLaTeXCodeFastQCRawReads.txt
+    echo "\includepdf[pages=-,frame,scale=0.85,angle=-270,pagecommand={\pagestyle{fancy}}]{$ELNPath$Directory/QCReports/FastQCReports/fastqcRawData/$UniqRootName$Suffix1B}" >> $Directory-ELNLaTeXCodeFastQCRawReads.txt
+    echo "\includepdf[pages=-,frame,scale=0.85,angle=-270,pagecommand={\pagestyle{fancy}}]{$ELNPath$Directory/QCReports/FastQCReports/fastqcRawData/$UniqRootName$Suffix2B}" >> $Directory-ELNLaTeXCodeFastQCRawReads.txt
     echo "\index[sample]{$SampleID\_$Species\_$SampleLoc\_$CaptureDate\!FastQC Reports\!Raw data|)}" >> $Directory-ELNLaTeXCodeFastQCRawReads.txt
     echo "" >> $Directory-ELNLaTeXCodeFastQCRawReads.txt
 done< UniqRootName
@@ -108,6 +122,11 @@ sort RootName | uniq > UniqRootName
 echo -e "\n\n *** RUNNING ADAPTER-REMOVAL ON RAW READS *** \n\n"
 
 #Run AdapterRemoval2 (does not process Undetermined fastq files)
+#Echo to stdout record AdapterRemoval parameters not recorded in settings file used in analysis:
+echo ""
+echo -e "ADAPTER REMOVAL Maximum Number of Ns/Read Permitted Parameter = $MaxNs"
+echo ""
+
 while read UniqRootName; do
      File1="$UniqRootName$Suffix1"
      File2="$UniqRootName$Suffix2"
@@ -116,8 +135,9 @@ while read UniqRootName; do
      ####AdapterRemoval --identify-adapters --file1 $File1 --file2 $File2
      #FYI the adapters used below are standard for Illumina Truseq dual-indexed libraries (adapter 1 written as 5'-3'; adapter 2 always given as the reverse complement sequence), containing the Illumina Universal adapter sequencing primer binding site sequence (read 1=GATCGGAAGAGCACACGTCTGAACTCCAGTCAC; read 2=AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT), followed by the sample's unique 8-mer index, and the i7/i5 primer sequence in every Illumina adapter that binds to the flow cell (adapter 1: CGTATGCCGTCTTCTGCTTG; adapter 2: TCGGTGGTCGCCGTATCATT). Note that this also removes the read 1 3' A overhangs added during library prep (hence why there is an 'A' at the start of the read 1 adapter sequence before the primer binding site sequence). One of the other most common Illumina Truseq adapter combinations used is just a single index adapter, in which case just delete 'NNNNNNNNGTGT' from the middle of adapter 2; also note that the length of the indexing barcode has changed over time so your adapter 1 may have fewer N's (e.g., 6 (rather than the 8 used here) is also common).
      
-#Trim Adapters. Parameters set to use 24 threads, the fastq read number in the input files is separated from the header by a space, trim consecutive Ns from the 5' and 3' termini, and trim consecutive stretches of low quality bases at the 5' and 3' termini (below a minquality of 25), discard reads that have 150 or more Ns (with 250bp reads, this would require a minimum of 40% of the read to be called),  and require reads to be at least 30 bp after trimming. The adapter sequences to be trimmed from the 3' ends of the reads are given, allowing ambiguity for the individual sample index so the code will run across samples. Read pairs that overlap by a minimum of 11 bases (the default) are collapsed into a single contig. Output files are combined, meaning all of the trimmed read1 and read2 reads as well as collapsed read1/read2 reads (added to the read1 file) and singletons where one of the mate pairs was discarded (with reads discarded due to quality filters or read merging are replaced with a single 'N' and Phred score of 0). These output files are  bzip2 compressed at the max compression level (9). Remaining parameters were left as default (i.e., --mm mismatch rate of 3, --shift of 2 bp in read2 to allow for missing bases, essentially no limit on max read length, and the default --minalignmentlength of 11bp overlap required before collapsing read1 and read2 pairs.)
-     AdapterRemoval --file1 $File1 --file2 $File2 --basename $UniqRootName --threads 24 --mate-separator ' ' --trimns --trimqualities --minquality 25 --maxns $MaxNs --minlength 30 --minalignmentlength $minalignmentlength --adapter1 AGATCGGAAGAGCACACGTCTGAACTCCAGTCACNNNNNNNNATCTCGTATGCCGTCTTCTGCTTG --adapter2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTNNNNNNNNGTGTAGATCTCGGTGGTCGCCGTATCATT --collapse --combined-output --bzip2
+#Trim Adapters. Parameters extracted from the parameter file include the minimum base call quality threshold, the size of the window used for assessing average base call quality, the minimum required read length below which the read is discarded, and the minimum number of required basepair overlap in order to merge read 1 and read 2 pairs. Other parameters used include setting the program to use 24 threads, the fastq read number in the input files is separated from the header by a space, trim consecutive Ns from the 5' and 3' termini, and trim consecutive stretches of low quality bases at the 5' and 3' termini (below the set $MinQual threshold), discard reads that have X% (set in param file, used to calculate $MaxNs which is dependent on read length) or more Ns, and require reads to be at least $MinLength bp after trimming. The adapter sequences to be trimmed from the 3' ends of the reads are given, allowing ambiguity for the individual sample index so the code will run across samples. Read pairs that overlap by a minimum of $minalignmentlength bases are collapsed into a single contig. Output files are combined, meaning all of the trimmed read1 and read2 reads as well as collapsed read1/read2 reads (added to the read1 file) and singletons where one of the mate pairs was discarded (with reads discarded due to quality filters or read merging are replaced with a single 'N' and Phred score of 0) are included in the single output read 1 and read 2 files. These output files are  bzip2 compressed at the max compression level (9). Remaining parameters were left as default (i.e., --mm mismatch rate of 3, --shift of 2 bp in read2 to allow for missing bases, essentially no limit on max read length, and the default --minalignmentlength of 11bp overlap required before collapsing read1 and read2 pairs.)
+
+     AdapterRemoval --file1 $File1 --file2 $File2 --basename $UniqRootName --threads 24 --mate-separator ' ' --trimwindows $TrimWin --trimns --trimqualities --minquality $MinQual --maxns $MaxNs --minlength $MinLength --minalignmentlength $minalignmentlength --adapter1 AGATCGGAAGAGCACACGTCTGAACTCCAGTCACNNNNNNNNATCTCGTATGCCGTCTTCTGCTTG --adapter2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTNNNNNNNNGTGTAGATCTCGGTGGTCGCCGTATCATT --collapse --combined-output --bzip2
 done< UniqRootName
 
 ##Generate FastQC reports for your trimmed sequencing data##
@@ -126,8 +146,14 @@ mkdir fastqcTrimmedData
 #Create a list of files to be processed (does not process Undetermined fastq files)
 ls --ignore=Undetermined* | grep .truncated.bz2 > TrimmedFiles
 echo -e "\n\n *** RUNNING FASTQC ON TRIMMED READS *** \n\n"
+
+echo -e "FastQC parameter limits for quality trimmed read data:"
+while read TrimmedFastQCFile; do
+    echo -e $TrimmedFastQCFile
+done< $QTrimmedFastQCLimitsFile  
+
 while read TrimmedFiles; do
-     fastqc -o fastqcTrimmedData -t 24 -f fastq $TrimmedFiles
+     fastqc --limits $QTrimmedFastQCLimitsFile --adapters $AdapterFile --contaminants $ContaminantFile --kmers $kmersize -o fastqcTrimmedData -t 24 -f fastq $TrimmedFiles
 done< TrimmedFiles
 
 #Start LaTeX code for ELN
@@ -166,11 +192,11 @@ while read UniqRootName; do
     echo "\phantomsection" >> $Directory-ELNLaTeXCodeAdapterRemovalSettings.txt
     echo "\addcontentsline{toc}{subsubsection}{$SampleID\_$Species\_$SampleLoc\_$CaptureDate}" >> $Directory-ELNLaTeXCodeAdapterRemovalSettings.txt
     echo "\index[sample]{$SampleID\_$Species\_$SampleLoc\_$CaptureDate\!Adapter \& Quality Trimming Reports|(}" >> $Directory-ELNLaTeXCodeAdapterRemovalSettings.txt
-    echo "\includepdf[pages=-,frame,scale=0.85,angle=-270,pagecommand={\pagestyle{fancy}}]{/Users/Lindsey/Box/KovachLab/Data/Sparrows/GECO/Data/SparrowRawData/$Directory/FastQCReports/fastqcTrimmedData/$UniqRootName$Suffix1D}" >> $Directory-ELNLaTeXCodeFastQCTrimmedReads.txt
-    echo "\includepdf[pages=-,frame,scale=0.85,angle=-270,pagecommand={\pagestyle{fancy}}]{/Users/Lindsey/Box/KovachLab/Data/Sparrows/GECO/Data/SparrowRawData/$Directory/FastQCReports/fastqcTrimmedData/$UniqRootName$Suffix2D}" >> $Directory-ELNLaTeXCodeFastQCTrimmedReads.txt
-    echo "\includepdf[pages=-,frame,scale=0.85,pagecommand={\pagestyle{fancy}}]{/Users/Lindsey/Box/KovachLab/Data/Sparrows/GECO/Data/SparrowRawData/$Directory/AdapterRemovalSettings/$UniqRootName-AdapterRemovalParameters.pdf}" >> $Directory-ELNLaTeXCodeAdapterRemovalSettings.txt
+    echo "\includepdf[pages=-,frame,scale=0.85,angle=-270,pagecommand={\pagestyle{fancy}}]{$ELNPath$Directory/QCReports/FastQCReports/fastqcTrimmedData/$UniqRootName$Suffix1D}" >> $Directory-ELNLaTeXCodeFastQCTrimmedReads.txt
+    echo "\includepdf[pages=-,frame,scale=0.85,angle=-270,pagecommand={\pagestyle{fancy}}]{$ELNPath$Directory/QCReports/FastQCReports/fastqcTrimmedData/$UniqRootName$Suffix2D}" >> $Directory-ELNLaTeXCodeFastQCTrimmedReads.txt
+    echo "\includepdf[pages=-,frame,scale=0.85,pagecommand={\pagestyle{fancy}}]{$ELNPath$Directory/AdapterRemovalSettings/$UniqRootName-AdapterRemovalParameters.pdf}" >> $Directory-ELNLaTeXCodeAdapterRemovalSettings.txt
     echo '\begin{landscape}' >> $Directory-ELNLaTeXCodeAdapterRemovalSettings.txt
-    echo "\includepdf[pages=-,frame,scale=0.85,angle=-270,pagecommand={\pagestyle{fancy}}]{/Users/Lindsey/Box/KovachLab/Data/Sparrows/GECO/Data/SparrowRawData/$Directory/AdapterRemovalSettings/$UniqRootName.AdapterRemovalDistributionCharts.pdf}" >> $Directory-ELNLaTeXCodeAdapterRemovalSettings.txt
+    echo "\includepdf[pages=-,frame,scale=0.85,angle=-270,pagecommand={\pagestyle{fancy}}]{$ELNPath$Directory/AdapterRemovalSettings/$UniqRootName.AdapterRemovalDistributionCharts.pdf}" >> $Directory-ELNLaTeXCodeAdapterRemovalSettings.txt
     echo '\end{landscape}' >> $Directory-ELNLaTeXCodeAdapterRemovalSettings.txt
     echo "\index[sample]{$SampleID\_$Species\_$SampleLoc\_$CaptureDate\!FastQC Reports\!Trimmed data|)}" >> $Directory-ELNLaTeXCodeFastQCTrimmedReads.txt
     echo "\index[sample]{$SampleID\_$Species\_$SampleLoc\_$CaptureDate\!Adapter \& Quality Trimming Reports|)}" >> $Directory-ELNLaTeXCodeAdapterRemovalSettings.txt
@@ -398,24 +424,37 @@ rm *R.txt
 rm *settings-parameters
 rm *-AdapterRemovalParameters
 
+#Run MultiQC
+echo -e "\n\n *** RUNNING MULTIQC *** \n\n"
+module purge
+module load anaconda/colsa
+conda activate multiqc-1.10.1
+multiqc Stats/ fastqcRawData/ AdapterRemovalSettings/ fastqcTrimmedData/
+module purge
+module load linuxbrew/colsa
+
 #Archive and compress the raw reads to organize the directory and save disc space
-echo -e "\n\n ORGANIZING FASTQC REPORT OUTPUT \n\n"
+echo -e "\n\n *** ORGANIZING QC REPORT OUTPUT *** \n\n"
 rsync -acv *_R1_fastqc.pdf fastqcRawData/
 rsync -acv *_R2_fastqc.pdf fastqcRawData/
 rsync -acv *.truncated_fastqc.pdf fastqcTrimmedData/
 rm *_R1_fastqc.pdf
 rm *_R2_fastqc.pdf
 rm *.truncated_fastqc.pdf
-mkdir FastQCReports
-rsync -acv fastqcRawData FastQCReports/
-rsync -acv fastqcTrimmedData FastQCReports/
+mkdir QCReports
+mkdir QCReports/MultiQCReports
+mkdir QCReports/FastQCReports
+rsync -acv fastqcRawData QCReports/FastQCReports/
+rsync -acv fastqcTrimmedData QCReports/FastQCReports/
+rsync -acv multiqc_data QCReports/MultiQCReports
+rsync -acv multiqc_report.html QCReports/MultiQCReports
 rm -r fastqcRawData
 rm -r fastqcTrimmedData
+rm -r multiqc_data
+rm multiqc_report.html
+
 #Create a list of files to be processed (DOES include Undetermined fastq files)
-ls *.f*q* > AllFilesToArchive
-echo Reports >> AllFilesToArchive
-echo Stats >> AllFilesToArchive
-echo AdapterRemovalSettings >> AllFilesToArchive
+echo "\n\n *** CALCULATING FILE MD5SUMs *** \n\n"
 #Record the md5sums of the files before compression:
 #Set date & time stamp variable
 current_time=$(date "+%Y.%m.%d-%H.%M")
@@ -426,17 +465,20 @@ find $SourceLocation -type f \( ! -path '*/.*' \) \( -not -name "$SourceFilename
 
 #Archive and compress the raw sequencing reads and reports
 echo "\n\n *** ARCHIVING & COMPRESSING RAW SEQUENCING READS & ADAPTER REMOVAL FILES *** \n\n"
+ls *.f*q* > AllFilesToArchive
+echo Reports >> AllFilesToArchive
+echo Stats >> AllFilesToArchive
+echo AdapterRemovalSettings >> AllFilesToArchive
 tar cvfj "$Directory"_RawSequencingReads.tar.bz2 -T AllFilesToArchive
 #find $SourceLocation -type f \( -name $Directory_RawSequencingReads.tar.bz2 \) -exec md5sum '{}' \; >> $SourceFilename
 #Backup newly created files
 Path=$(pwd)
-BoxPath='/KovachLab/Data/Sparrows/GECO/Data/SparrowRawData/'
 export https_proxy=http://premise.sr.unh.edu:3128
-rclone copy Premise:$Path/AdapterRemovalSettings Box:$BoxPath$Directory/AdapterRemovalSettings
-rm -r Reports
-rm -r Stats
-rm -r AdapterRemovalSettings
-rm *.f*q*
+rclone copy $LocalConfigID:$Path/AdapterRemovalSettings $BoxConfigID:$BoxPath$Directory/AdapterRemovalSettings
+$RecycleBin -r Reports
+$RecycleBin -r Stats
+$RecycleBin AdapterRemovalSettings
+$RecycleBin *.f*q*
 
 #Generate LaTeX code for md5sums file
 touch $Directory-ELNLaTeXCode-md5sums.txt
@@ -444,20 +486,20 @@ echo "\subsection{$SeqDate\_$SeqPlatform\_$SeqPerson\_$SeqDescription}" >> $Dire
 echo '\phantomsection' >> $Directory-ELNLaTeXCode-md5sums.txt
 echo "\addcontentsline{toc}{subsubsection}{$SampleID\_$Species\_$SampleLoc\_$CaptureDate}" >> $Directory-ELNLaTeXCode-md5sums.txt
 echo '\begin{landscape}' >>  $Directory-ELNLaTeXCode-md5sums.txt
-echo "\includepdf[pages=-,frame,scale=0.85,angle=-270,pagecommand={\pagestyle{fancy}}]{/Users/Lindsey/Box/KovachLab/Data/Sparrows/GECO/Data/SparrowRawData/$Directory/$SourceFilename.pdf}" >> $Directory-ELNLaTeXCode-md5sums.txt
+echo "\includepdf[pages=-,frame,scale=0.85,angle=-270,pagecommand={\pagestyle{fancy}}]{$ELNPath$Directory/$SourceFilename.pdf}" >> $Directory-ELNLaTeXCode-md5sums.txt
 echo '\end{landscape}' >> $Directory-ELNLaTeXCode-md5sums.txt
 
 #Archive and compress the fastqc data to organize directory and save disc space
-echo -e "\n\n *** ARCHIVING & COMPRESSING FASTQC FILES *** \n\n"
-rclone copy Premise:$Path/FastQCReports Box:$BoxPath$Directory/FastQCReports
-tar cvfj "$Directory"_FastQCReports.tar.bz2 FastQCReports
+echo -e "\n\n *** ARCHIVING & COMPRESSING QC FILES *** \n\n"
+rclone copy $LocalConfigID:$Path/QCReports $BoxConfigID:$BoxPath$Directory/QCReports
+tar cvfj "$Directory"_QCReports.tar.bz2 QCReports
 
 echo -e "\n\n *** FINAL FILE ORGANIZATION, BACKUP & CLEANUP *** \n\n"
 mkdir RawReads-and-SequencingPreProcessingData
-rsync -acv *_FastQCReports.tar.bz2 RawReads-and-SequencingPreProcessingData/
+rsync -acv *_QCReports.tar.bz2 RawReads-and-SequencingPreProcessingData/
 rsync -acv *_RawSequencingReads.tar.bz2 RawReads-and-SequencingPreProcessingData/
-rm *_FastQCReports.tar.bz2
-rm *_RawSequencingReads.tar.bz2
+$RecycleBin *_QCReports.tar.bz2
+$RecycleBin *_RawSequencingReads.tar.bz2
 
 #Add the md5sums of the 2 .tar.bz2 compressed files to the md5sum file:
 find $SourceLocation -type f \( -path '*/RawReads-and-SequencingPreProcessingData/*' \)  \( ! -path '*/.*' \) -exec md5sum '{}' \; >> $SourceFilename
@@ -479,9 +521,9 @@ pandoc Temp-$SourceFilename.txt -t latex -V geometry:landscape -V geometry:"top=
 rm Temp-$SourceFilename.txt
 
 #Backup additional newly created files
-rclone copy Premise:$Path --include "*.truncated.bz2" Box:$BoxPath$Directory/QualityTrimmedReads
-rclone copy Premise:$Path --include "$SourceFilename.pdf" Box:$BoxPath$Directory
-rclone copy Premise:$Path --include "*ELNLaTeXCode*" Box:$BoxPath$Directory/ELNLaTeXCodeFiles
+rclone copy $LocalConfigID:$Path --include "*.truncated.bz2" $BoxConfigID:$BoxPath$Directory/QualityTrimmedReads
+rclone copy $LocalConfigID:$Path --include "$SourceFilename.pdf" $BoxConfigID:$BoxPath$Directory
+rclone copy $LocalConfigID:$Path --include "*ELNLaTeXCode*" $BoxConfigID:$BoxPath$Directory/ELNLaTeXCodeFiles
 rsync -acv $SourceFilename* RawReads-and-SequencingPreProcessingData/
 mkdir RawReads-and-SequencingPreProcessingData/ELNLaTeXCode
 rsync -acv *ELNLaTeXCode* RawReads-and-SequencingPreProcessingData/ELNLaTeXCode
@@ -499,7 +541,7 @@ rm Formatted-$SourceFilename
 rm Final-$SourceFilename
 rm Header
 rm Footer
-rm -r FastQCReports
+$RecycleBin QCReports
 rm *ELNLaTeXCode*
 
 #Recommended next step is to start mapping pipeline
