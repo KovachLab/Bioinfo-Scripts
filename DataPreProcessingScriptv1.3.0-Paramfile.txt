@@ -1,0 +1,20 @@
+#Location of FastQC parameter files:
+RawFastQCLimitsFile=/mnt/lustre/mel/leq29/BioinformaticScripts/RawReadNovaseqFastQClimits2.txt
+QTrimmedFastQCLimitsFile=/mnt/lustre/mel/leq29/BioinformaticScripts/QTrimmedReadNovaseqFastQClimits2.txt
+AdapterFile=/mnt/lustre/mel/leq29/BioinformaticScripts/adapter_list2.txt
+ContaminantFile=/mnt/lustre/mel/leq29/BioinformaticScripts/contaminant_list2.txt
+kmersize=7       # Specifies the length of Kmer to look for in the Kmer content module. Specified Kmer length must be between 2 and 10. Default length is 7 if not specified.
+
+##AdapterRemoval2 parameters:
+minalignmentlength=11 # Minimum number of required overlapping base pairs between read 1 and read 2 pairs before they are collapsed.
+PctNs=0.60  # Percent of read length that can be Ns before the read is discarded.
+TrimWin=0.1 # Window size used for assessing the average base call quality, expressed as a percent of total read length.
+MinQual=23 # Minimum base call quality threshold
+MinLength=30 # Minimum retained read length
+
+##Backup parameters:
+LocalConfigID='Premise' #The rclone name for your config file for the local cluster used for analysis.
+BoxConfigID='Box' #The rclone name for your config file set to back things up to Box (or any other cloud service). 
+BoxPath='/KovachLab/Data/Sparrows/GECO/Data/SparrowRawData/' #The path in Box where you want the output files backed up to. Note that this script will automatically create a directory within that path with the same name as your working directory.
+ELNPath='/Users/Lindsey/Box/KovachLab/Data/Sparrows/GECO/Data/SparrowRawData/' #Basically the same as your BoxPath above, only with your local computer path to your mounted Box drive prepended to it, so as to automatically be able to insert all of the output pdf files into an electronic lab notebook LaTeX file. If you are not using a LaTeX notebook, this parameter and the output ELN files can be ignored.
+RecycleBin='/mnt/lustre/mel/shared/Scripts/rm' #Path to recycle bin script so important files aren't immediately deleted before you have a chance to ensure the output worked correctly and backed files up appropriately.
