@@ -359,9 +359,4 @@ In the Kovach Lab UNH BOX group storage drive:
 On the "Sparrows" 3TB WD MyBook external hard drive (normally kept at the UNH campus in the Kovach lab in Rudman Hall):
 /Volumes/Sparrows/GECO/Data/SparrowRawData/20200728_INVS-SP_LFe_SparrowWholeGenomeShotgun
 
-MD5 Checksums have been compared and confirmed to be identical for all files in all locations as of 2021-02-08 except as noted:
-    Files that still need to be uploaded to Box:
-        - Undetermined
-        - all *truncated.bz2 files
-    
-    Files that still need to be backed up to SparrowsHD:
+MD5 Checksums have been compared and confirmed to be identical for all files in all locations as of 2021-02-08.
