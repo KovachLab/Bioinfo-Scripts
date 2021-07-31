@@ -1,0 +1,367 @@
+This 20200728_INVS-SP_LFe_SparrowWholeGenomeShotgun_dataREADME version 1.0.0 file was last updated on 2021-April-12 by Lindsey Fenderson
+Edit history: 
+   # 2.) (Example: SHARING/ACCESS INFORMATION section updated on July 12, 2022 by Lindsey Fenderson to describe initial publication of these data and to add stable URL links to the public repositories of these data or data products). Version incrememnted to 1.0.1.
+    1.) Majority of template completed by Lindsey Fenderson by February 2, 2021 - version 1.0.0
+
+This README template was adapted from the Cornell University AUTHOR_DATASET_ReadmeTemplate.txt, retrieved from the "Guide to writing "readme" style metadata" website at https://data.research.cornell.edu/content/readme on June 8, 2020.
+
+N.B.: Wherever additional files are mentioned below for additional details, unless noted otherwise, copies of the files should be available in my electronic lab notebook stored in the Kovach Lab UNH Group Box Drive in the folder 'Fenderson - Sparrows', i.e.,: Box/KovachLab/Fenderson - Sparrows/ELN.pdf
+
+GENERAL INFORMATION
+
+1. Title of Dataset: 20200728_INVS-SP_LFe_SparrowWholeGenomeShotgun 
+(N.B.: When the data was originally received on Premise from Toni Westbrook the directory was called 'AKSparrow30'. Directory was renamed per the Kovach Lab Data Management SOPs)
+
+2. Author Information
+	A. Principal Investigator Contact Information (in this context, the person responsible for generating & analyzing the data)
+		Name: Lindsey Fenderson
+		Institution: University of New Hampshire
+		Address: Natural Resources & the Environment, Nesmith Hall Rm 206, Durham, NH 03824
+		Email: Lindsey.Fenderson@unh.edu
+
+	B. Associate or Co-investigator Contact Information (in this context, someone who might not know all the sampling or methodological details but would know who to contact to find out and how to get in touch with them)
+		Name: Adrienne Kovach
+		Institution: University of New Hampshire
+		Address: Natural Resources & the Environment, James Hall Rm 130, Durham, NH 03824
+		Email: akovach@unh.edu
+
+	C. Alternate Contact Information (in this context, another point of contact, someone who might know other related workflow details or may know who to contact to find out)
+		Name: Kelley Thomas
+		Institution: University of New Hampshire
+		Address: Molecular, Cellular, & Biomedical Sciences, Gregg Hall Rm 409, Durham, NH 03824
+		Email: Kelley.Thomas@unh.edu
+
+3. Primary Project These Samples Were Sequenced For:
+    Comparative Genomics of 6 Tidal Marsh Sparrow Species (Ammospiza caudacutus, A. nelsoni, A. maritima, Melospiza melodia, M. georgiana, Passerculus sandwichensis)
+
+4. Sample Information:
+The following 30 samples were whole genome shotgun-sequenced (Names include the Individual-BandNumber_Species_GeneralSamplingMarshSTATE_YYYYMMDDSamplingDate):
+2631-22269_Mgeorgiana_WoodlandBeachDE_20160609
+2631-22213_Psandwichensis_QuoddyBarME_20150808
+2821-14754_Amaritima_BestpitchFerryBlackwaterMD_20190612
+2631-22765_Acaudacuta_BombayHookDE_20190709
+2631-22194_Anelsoni_ClarkCoveME_20150804
+2551-18702_Amaritima_HammonassetCT_20160720
+2631-22296_Mgeorgiana_HobartStreamME_20160705
+2551-20638_Amaritima_ParkerRiverMA_20150722
+2631-22061_Acaudacuta_GreatMarshesMA_20150619
+2551-18361_Anelsoni_MendallMarshME_20190629
+2631-22265_Acaudacuta_BestpitchFerryBlackwaterMD_20160603
+2631-22288_Psandwichensis_ShipIslandME_20160629
+2551-86994_Mmelodia_MedouieCreekNantucketMA_20160712
+2821-14768_Amaritima_HogNeckVA_20190618
+2631-22214_Anelsoni_QuoddyBarME_20150809
+2821-14815_Psandwichensis_MendallMarshME_20190807
+2631-22337_Mgeorgiana_FerryPointCT_20160717
+2631-22966_Acaudacuta_WertheimNY_20190710
+2551-86950_Mmelodia_LittleCreekDE_20160615
+2631-22303_Psandwichensis_MagurrewockME_20160707
+2631-22921_Acaudacuta_MillGutRI_20190531
+2631-22286_Anelsoni_ShipIslandME_20160628
+2551-86992_Mmelodia_HobartStreamME_20160706
+2631-22373_Mgeorgiana_NewfieldsSquamscottNH_20160805
+2551-18706_Mmelodia_WertheimNY_20160723
+2551-18698_Mmelodia_LittleCreekDE_20160630
+2811-42022_Anelsoni_HarringtonME_20190801
+2821-97737_Amaritima_OCForsytheNJ_20190712
+2781-84949_Psandwichensis_ParkNarraguagusME_20190618
+2631-22792_Mgeorgiana_FishingBayMD_20190724
+
+5. Dates of data collection: 
+#(single date, range, approximate date) <suggested format YYYY-MM-DD>: 
+    A. Dates Individuals Were Sampled: Breeding season (May-August) between 2015-2019
+    B. Date Sequencing Data Was Generated: July 2020
+
+6. Geographic location of data collection <latitude, longitude, or city/region, State, Country, as appropriate>: 
+All samples were collected from sparrows in coastal tidal marshes in the northeastern USA, from Virginia to Maine. I attempted to use saltmarsh and Nelsons sparrow samples from outside of their hybrid zone (from south of Cape Cod for SALS and from Mendall Marsh, ME and north for Nelsons) 
+
+Specific sampling locations and field metadata are available in the Saltmarsh Habitat & Avian Research Program (SHARP) database (http://demo.tidalmarshbirds.org/) and my electronic lab notebook (See SpaEx0003 & SpaEx0004)
+
+7. Information about funding sources that supported the collection of the data: 
+
+NSF Award Number: 1826777
+Project Title: RII Track-2FEC: Genomic Ecology of Coastal Organisms (GECO): A Systems-
+Based Research and Training Program in Genome-Phenome Relationships in the Wild
+
+SHARING/ACCESS INFORMATION
+
+1. Licenses/restrictions placed on the data: 
+These data are owned by the University of New Hampshire, to be managed by Adrienne Kovach. There are no restrictions on the use of these data within the GECO team before or after publication as part of my intended comparative genomics project (see document entitled 'LEF-Comparative Genomics one-pager.docx' in the GECO Box drive 'One Pagers' folder). However, if you use these data, see sections entitled "Intellectual property and ownership" and "Appendix 4 - Authorship" in the document 'GECO_Team_Charter_Draft_4-30-2019.docx' (stored in the GECO Box drive in the 'GECO Team Documents' folder) to ensure any future publications comply with group co-authorship guidelines and that the GECO NSF award is appropriately acknowledged. 
+
+2. Links to publications that cite or use the data: 
+None as of yet
+
+3. Links to other publicly accessible locations of the data: 
+None as of yet
+
+4. Links/relationships to ancillary data sets:
+Samples collected as part of the SHARP & GECO research collaborations. Sample field metadata should also be stored in the SHARP database. Most of the field metadata recorded in my lab notebook files was retrieved from the following files - 'GECO SAMPLES 2019.xlsx' (GECO field metadata that was compiled while the SHARP database was out of order, GoogleDoc link - https://docs.google.com/spreadsheets/d/18vtBgp5vdwyvJ8jpYabmEPbm4_MJHjNg9sJYuiCO8EI/edit?usp=sharing) and 'BandFeathHemat_1.csv' (Meagan Conway sampling metadata), not from the raw field datasheets, so there may be transcription errors or errors that have been updated in the respective databases since I extracted the information.
+
+5. Was data derived from another source?: NO
+	A. If yes, list source(s): 
+
+6. Recommended citation for this dataset: 
+If needed, a temporary citation until publication, based on USGS data citation guidelines (from https://www.usgs.gov/products/data-and-tools/data-management/data-citation#:~:text=Data%20citation%20is%20the%20practice,%2C%20source%2C%20and%20responsible%20parties. accessed February 1, 2021):
+
+Fenderson, L.E., Thomas, K., Kovach, A. (2020) Whole Genome Shotgun Illumina Sequencing Data of 30 Individual Tidal Marsh Sparrows from Six Species. Genome Ecology of Coastal Organisms.
+
+DATA & FILE OVERVIEW
+
+1. File List: 
+#<list all files (or folders, as appropriate for dataset organization) contained in the dataset, with a brief description>
+    I.) *.truncated.bz2 files - quality trimmed sequencing reads in fastq format.
+    II.) Directory RawReads-and-SequencingPreProcessingData, contains the following -
+        A.) 20200728_INVS-SP_LFe_SparrowWholeGenomeShotgun_RawSequencingReads.tar.bz2 - Directory which was tar archived & bgzip2 compressed, containing the following:
+            i.) R1 & R2 *.fastq.gz files - the raw sequencing reads in fastq format.
+            ii.) Stats directory - Stats and metadata pertaining to the sequencing run and sample demultiplexing.
+            iii.) Reports directory - .html files that present and summarize the data from the Stats directory files in informative and readable tables.
+            iv.) AdapterRemovalSettings directory - Folder containing (for each sample) all of the metadata and stats generated by AdapterRemoval during quality trimming. Includes 1.) the raw *.settings output generated by the AdapterRemoval2 program, which lists the metadata (AdapterRemoval version number, the adapter sequences that were searched for and trimmed) and parameters used in the analysis, summary trimming statistics (e.g., number of discarded reads and singletons, number of retained reads, average read length etc.) and a tabular length distribution histogram of the number of retained reads of a given length in the new pair1.truncated.bz2 & pair2.truncated.bz2 files, as well as the number of singletons, the number of collapsed reads, and the number of truncated collapsed reads combined into the read 1 file, the number of reads discarded and the total number of reads at that read length; 2.) copies of that *.settings output nicely formatted into a .pdf, 3.) and charts made in R summarizing the tabular output length histogram of the distributions of reads in each AdapterRemoval2 category (all, mate 1, mate 2, singleton, collapsed, collapsed & truncated, and discarded).
+        B.) 20200728_INVS-SP_LFe_SparrowWholeGenomeShotgun_QCReports.tar.bz2 - Directory which was tar archived & bgzip2 compressed, containing the following:
+            i.) fastqcRawData directory (In the FastQCReports directory) - fastQC reports generated from the raw sequencing reads (default .html & .zip output), as well as the reports compiled all into a .pdf.
+            ii.) fastqcTrimmedData directory (In the FastQCReports directory) - fastQC reports generated from the trimmed sequencing reads (default .html & .zip output), as well as the reports compiled all into a .pdf.
+            iii.) MultiQCReports directory - an .html file (and associated data) generated by multiqc which allows you to easily view qc reports across samples in one chart or table to readily identify any outliers or samples with weird behavior relative to the others. The resulting files should contain summaries for the bcl2fastq data (if available), the raw read fastqc files, the adapter removal settings files, and the quality trimmed fastqc files.
+        C.) 20200728_INVS-SP_LFe_SparrowWholeGenomeShotgun_ELNLaTeXCode - Directory containing the following:
+            i.) Code generated automatically as part of my data preprocessing script for inserting the FastQC pdf reports of the raw reads into my ELN
+            ii.) Code generated automatically as part of my data preprocessing script for inserting the AdapterRemoval settings & chart pdf reports into my ELN
+            iii.) Code generated automatically as part of my data preprocessing script for inserting the FastQC pdf reports of the quality trimmed reads into my ELN
+            iv.) Code generated automatically as part of my data preprocessing script for inserting the pdf of the calculated md5sums for all of the files in this data directory into my ELN
+        D.) Premise-20200728_INVS-SP_LFe_SparrowWholeGenomeShotgun-md5sum-2021.02.23-10.57 (both .txt & .pdf formats) - A file that lists of all the md5 checksums for every file in the directory as of the time stamp in the file name (in this case, for all of the renamed, concatenated raw reads for each sample, as well as all of the files in the Reports and Stats directories).
+        E.) DataPreProcessing-20200728_INVS-SP_LFe_SparrowWholeGenomeShotgun-slurmOutput-2021.01.30-22.24.pdf - A copy of the file containing all of the slurm output and analysis metadata from the DataPreProcessingV1.3.1.sh analysis which performed all of the data preprocessing to transform the active files in this directory from the raw reads to the mapping-ready reads, i.e., it ran fastQC on the raw reads, performed adapter & quality trimming with adapter removal2, and reran fastQC on the quality trimmed reads. The file was generated and analysis job was submitted using LEF-DataPreProcessing.sh, which ran program DataPreProcessing.sh ver 1.3.1 (This script/pipeline is available at /mnt/lustre/mel/shared/Scripts or on GitHub, in either the KovachLab (https://github.com/KovachLab) or LEFenderson (https://github.com/LEFenderson) GitHub accounts under the Bioinfo-Scripts repository).
+
+2. Relationship between files, if important: 
+*.truncated.bz2 files are quality & adapter trimmed fastq files and were generated directly from the *.fastq.gz files.
+3. Additional related data collected that was not included in the current data package: 
+Environmental and various phenotypic metadata (e.g., bill morphological measurements, song recordings, photos, thermoregulatory imaging data, blood hematocrit measurements etc.), as well as possibly other biological samples (e.g., fecal or feather samples) were also (variably) collected for most of these individuals at the time of sampling. These data and a record of the existence of supplementary data or samples should be stored in the SHARP database, and/or the 'GECO SAMPLES 2019.xlsx' & 'BandFeathHemat_1.csv' files, as well as in my electronic lab notebook (See SpaEx0003 & SpaEx0004). The location of the other biological materials, as well as remaining blood samples not used in the extractions are likely stored *somewhere* in the Kovach lab at the University of New Hampshire (at the time of this writing, any remaining blood cards were stored in 3-hole binders above the middle bench; remaining blood samples in Queens Lysis buffer were stored in boxes on the shelf above the opposite middle bench. I do not know where fecal/urine/feather etc. samples are stored but Adrienne or others should have that information). The DNA extracts and libraries should be at the Hubbard Center for Genome Studies laboratory at the University of New Hampshire.
+4. Are there multiple versions of the dataset?: NO
+	A. If yes, name of file(s) that was updated: 
+		i. Why was the file updated? 
+		ii. When was the file updated? 
+
+METHODOLOGICAL INFORMATION
+
+1. Description of methods used for collection/generation of data: 
+#<Include links or references to publications or other documentation containing experimental design or protocols used in data collection>
+
+Field sampling protocols followed SHARP SOPs for the year of collection. IACUC approval, bird banding permits and site permits where applicable should be available from Adrienne Kovach and/or Brian Olsen (University of Maine), or they would know where to get those numbers.
+
+DNA was extracted from blood of individuals with an Omega E.Z.N.A. Blood DNA Mini kit (Norcross, GA, USA; for samples on blood cards) or a Zymo Quick DNA Miniprep Plus kit (Irvine, California, USA; for samples collected in Queens Lysis buffer) per manufacturers instructions with minor modifications and extracts were quantified with a Qubit 3.0 fluorometer (using broad sensitivity reagents). Genomic DNA was prepared into Illumina TruSeq libraries using a dilute (1/5th ratios) Kapa HyperPlus kit (Roche Sequencing Solutions, Pleasanton, California, USA). Library prep samples were pooled and lightly sequenced on an Illumina iSeq at HCGS to check the pool balance and re-pooled if necessary. The library pool was sequenced on an Illumina Novaseq6000 (SP500) at Dana Farber Institute using paired end 250-bp reads. Some sampling metadata and details pertaining to sample extraction and quantification can be found in the files 'SpaEx0003' & 'SpaEx0004' DNA Extraction sections of my ELN. See also the relevant library prep (SparrowIlluminaSpaLP0003 & SparrowIlluminaSpaLP0004) & sequencing sections (all subsections pertaining to this dataset - '20200728_INVS-SP_LFe_SparrowWholeGenomeShotgun') of the ELN. Any additional methods if they exist may be found in the Research Logs section of my ELN under the Sparrow Comparative Genomics -  Research Notes section. Stephen Simpson (UNH Hubbard Center for Genomic Studies) performed the library prep and pooling/preparation for sequencing and Kelley Thomas has contacts at Dana Farber and oversaw the sample submission for sequencing. Toni Westbrook performed the initial bioinformatic QC for assessing the iSeq results and ran the bcl2fastq pipeline (if not done by Dana Farber service provider?) and generated the sequencing and demultiplexing stats.
+
+2. Methods for processing the data: 
+#<describe how the submitted data were generated from the raw or collected data>
+    A.  Reads for each lane were concatenated and samples were renamed following our lab naming conventions:
+cat SpaEx0003_01_S1_L001_R1_001.fastq.gz SpaEx0003_01_S1_L002_R1_001.fastq.gz > 2631-22269_Mgeorgiana_WoodlandBeachDE_20160609_R1.fastq.gz &
+cat SpaEx0003_01_S1_L001_R2_001.fastq.gz SpaEx0003_01_S1_L002_R2_001.fastq.gz > 2631-22269_Mgeorgiana_WoodlandBeachDE_20160609_R2.fastq.gz &
+cat SpaEx0003_02_S2_L001_R1_001.fastq.gz SpaEx0003_02_S2_L002_R1_001.fastq.gz > 2631-22213_Psandwichensis_QuoddyBarME_20150808_R1.fastq.gz &
+cat SpaEx0003_02_S2_L001_R2_001.fastq.gz SpaEx0003_02_S2_L002_R2_001.fastq.gz > 2631-22213_Psandwichensis_QuoddyBarME_20150808_R2.fastq.gz &
+cat SpaEx0003_03_S3_L001_R1_001.fastq.gz SpaEx0003_03_S3_L002_R1_001.fastq.gz > 2821-14754_Amaritima_BestpitchFerryBlackwaterMD_20190612_R1.fastq.gz &
+cat SpaEx0003_03_S3_L001_R2_001.fastq.gz SpaEx0003_03_S3_L002_R2_001.fastq.gz > 2821-14754_Amaritima_BestpitchFerryBlackwaterMD_20190612_R2.fastq.gz &
+cat SpaEx0003_04_S4_L001_R1_001.fastq.gz SpaEx0003_04_S4_L002_R1_001.fastq.gz > 2631-22765_Acaudacuta_BombayHookDE_20190709_R1.fastq.gz &
+cat SpaEx0003_04_S4_L001_R2_001.fastq.gz SpaEx0003_04_S4_L002_R2_001.fastq.gz > 2631-22765_Acaudacuta_BombayHookDE_20190709_R2.fastq.gz &
+cat SpaEx0003_05_S5_L001_R1_001.fastq.gz SpaEx0003_05_S5_L002_R1_001.fastq.gz > 2631-22194_Anelsoni_ClarkCoveME_20150804_R1.fastq.gz &
+cat SpaEx0003_05_S5_L001_R2_001.fastq.gz SpaEx0003_05_S5_L002_R2_001.fastq.gz > 2631-22194_Anelsoni_ClarkCoveME_20150804_R2.fastq.gz &
+cat SpaEx0003_06_S6_L001_R1_001.fastq.gz SpaEx0003_06_S6_L002_R1_001.fastq.gz > 2551-18702_Amaritima_HammonassetCT_20160720_R1.fastq.gz &
+cat SpaEx0003_06_S6_L001_R2_001.fastq.gz SpaEx0003_06_S6_L002_R2_001.fastq.gz > 2551-18702_Amaritima_HammonassetCT_20160720_R2.fastq.gz &
+cat SpaEx0003_07_S7_L001_R1_001.fastq.gz SpaEx0003_07_S7_L002_R1_001.fastq.gz > 2631-22296_Mgeorgiana_HobartStreamME_20160705_R1.fastq.gz &
+cat SpaEx0003_07_S7_L001_R2_001.fastq.gz SpaEx0003_07_S7_L002_R2_001.fastq.gz > 2631-22296_Mgeorgiana_HobartStreamME_20160705_R2.fastq.gz &
+cat SpaEx0003_08_S8_L001_R1_001.fastq.gz SpaEx0003_08_S8_L002_R1_001.fastq.gz > 2551-20638_Amaritima_ParkerRiverMA_20150722_R1.fastq.gz &
+cat SpaEx0003_08_S8_L001_R2_001.fastq.gz SpaEx0003_08_S8_L002_R2_001.fastq.gz > 2551-20638_Amaritima_ParkerRiverMA_20150722_R2.fastq.gz &
+cat SpaEx0003_09_S9_L001_R1_001.fastq.gz SpaEx0003_09_S9_L002_R1_001.fastq.gz > 2631-22061_Acaudacuta_GreatMarshesMA_20150619_R1.fastq.gz &
+cat SpaEx0003_09_S9_L001_R2_001.fastq.gz SpaEx0003_09_S9_L002_R2_001.fastq.gz > 2631-22061_Acaudacuta_GreatMarshesMA_20150619_R2.fastq.gz &
+cat SpaEx0003_10_S10_L001_R1_001.fastq.gz SpaEx0003_10_S10_L002_R1_001.fastq.gz > 2551-18361_Anelsoni_MendallMarshME_20190629_R1.fastq.gz &
+cat SpaEx0003_10_S10_L001_R2_001.fastq.gz SpaEx0003_10_S10_L002_R2_001.fastq.gz > 2551-18361_Anelsoni_MendallMarshME_20190629_R2.fastq.gz &
+cat SpaEx0003_11_S11_L001_R1_001.fastq.gz SpaEx0003_11_S11_L002_R1_001.fastq.gz > 2631-22265_Acaudacuta_BestpitchFerryBlackwaterMD_20160603_R1.fastq.gz &
+cat SpaEx0003_11_S11_L001_R2_001.fastq.gz SpaEx0003_11_S11_L002_R2_001.fastq.gz > 2631-22265_Acaudacuta_BestpitchFerryBlackwaterMD_20160603_R2.fastq.gz &
+cat SpaEx0003_12_S12_L001_R1_001.fastq.gz SpaEx0003_12_S12_L002_R1_001.fastq.gz > 2631-22288_Psandwichensis_ShipIslandME_20160629_R1.fastq.gz &
+cat SpaEx0003_12_S12_L001_R2_001.fastq.gz SpaEx0003_12_S12_L002_R2_001.fastq.gz > 2631-22288_Psandwichensis_ShipIslandME_20160629_R2.fastq.gz &
+cat SpaEx0003_13_S13_L001_R1_001.fastq.gz SpaEx0003_13_S13_L002_R1_001.fastq.gz > 2551-86994_Mmelodia_MedouieCreekNantucketMA_20160712_R1.fastq.gz &
+cat SpaEx0003_13_S13_L001_R2_001.fastq.gz SpaEx0003_13_S13_L002_R2_001.fastq.gz > 2551-86994_Mmelodia_MedouieCreekNantucketMA_20160712_R2.fastq.gz &
+cat SpaEx0003_14_S14_L001_R1_001.fastq.gz SpaEx0003_14_S14_L002_R1_001.fastq.gz > 2821-14768_Amaritima_HogNeckVA_20190618_R1.fastq.gz &
+cat SpaEx0003_14_S14_L001_R2_001.fastq.gz SpaEx0003_14_S14_L002_R2_001.fastq.gz > 2821-14768_Amaritima_HogNeckVA_20190618_R2.fastq.gz &
+cat SpaEx0003_15_S15_L001_R1_001.fastq.gz SpaEx0003_15_S15_L002_R1_001.fastq.gz > 2631-22214_Anelsoni_QuoddyBarME_20150809_R1.fastq.gz &
+cat SpaEx0003_15_S15_L001_R2_001.fastq.gz SpaEx0003_15_S15_L002_R2_001.fastq.gz > 2631-22214_Anelsoni_QuoddyBarME_20150809_R2.fastq.gz &
+cat SpaEx0004_01_S16_L001_R1_001.fastq.gz SpaEx0004_01_S16_L002_R1_001.fastq.gz > 2821-14815_Psandwichensis_MendallMarshME_20190807_R1.fastq.gz &
+cat SpaEx0004_01_S16_L001_R2_001.fastq.gz SpaEx0004_01_S16_L002_R2_001.fastq.gz > 2821-14815_Psandwichensis_MendallMarshME_20190807_R2.fastq.gz &
+cat SpaEx0004_02_S17_L001_R1_001.fastq.gz SpaEx0004_02_S17_L002_R1_001.fastq.gz > 2631-22337_Mgeorgiana_FerryPointCT_20160717_R1.fastq.gz &
+cat SpaEx0004_02_S17_L001_R2_001.fastq.gz SpaEx0004_02_S17_L002_R2_001.fastq.gz > 2631-22337_Mgeorgiana_FerryPointCT_20160717_R2.fastq.gz &
+cat SpaEx0004_03_S18_L001_R1_001.fastq.gz SpaEx0004_03_S18_L002_R1_001.fastq.gz > 2631-22966_Acaudacuta_WertheimNY_20190710_R1.fastq.gz &
+cat SpaEx0004_03_S18_L001_R2_001.fastq.gz SpaEx0004_03_S18_L002_R2_001.fastq.gz > 2631-22966_Acaudacuta_WertheimNY_20190710_R2.fastq.gz &
+cat SpaEx0004_04_S19_L001_R1_001.fastq.gz SpaEx0004_04_S19_L002_R1_001.fastq.gz > 2551-86950_Mmelodia_LittleCreekDE_20160615_R1.fastq.gz &
+cat SpaEx0004_04_S19_L001_R2_001.fastq.gz SpaEx0004_04_S19_L002_R2_001.fastq.gz > 2551-86950_Mmelodia_LittleCreekDE_20160615_R2.fastq.gz &
+cat SpaEx0004_05_S20_L001_R1_001.fastq.gz SpaEx0004_05_S20_L002_R1_001.fastq.gz > 2631-22303_Psandwichensis_MagurrewockME_20160707_R1.fastq.gz &
+cat SpaEx0004_05_S20_L001_R2_001.fastq.gz SpaEx0004_05_S20_L002_R2_001.fastq.gz > 2631-22303_Psandwichensis_MagurrewockME_20160707_R2.fastq.gz &
+cat SpaEx0004_06_S21_L001_R1_001.fastq.gz SpaEx0004_06_S21_L002_R1_001.fastq.gz > 2631-22921_Acaudacuta_MillGutRI_20190531_R1.fastq.gz &
+cat SpaEx0004_06_S21_L001_R2_001.fastq.gz SpaEx0004_06_S21_L002_R2_001.fastq.gz > 2631-22921_Acaudacuta_MillGutRI_20190531_R2.fastq.gz &
+cat SpaEx0004_07_S22_L001_R1_001.fastq.gz SpaEx0004_07_S22_L002_R1_001.fastq.gz > 2631-22286_Anelsoni_ShipIslandME_20160628_R1.fastq.gz &
+cat SpaEx0004_07_S22_L001_R2_001.fastq.gz SpaEx0004_07_S22_L002_R2_001.fastq.gz > 2631-22286_Anelsoni_ShipIslandME_20160628_R2.fastq.gz &
+cat SpaEx0004_08_S23_L001_R1_001.fastq.gz SpaEx0004_08_S23_L002_R1_001.fastq.gz > 2551-86992_Mmelodia_HobartStreamME_20160706_R1.fastq.gz &
+cat SpaEx0004_08_S23_L001_R2_001.fastq.gz SpaEx0004_08_S23_L002_R2_001.fastq.gz > 2551-86992_Mmelodia_HobartStreamME_20160706_R2.fastq.gz &
+cat SpaEx0004_09_S24_L001_R1_001.fastq.gz SpaEx0004_09_S24_L002_R1_001.fastq.gz > 2631-22373_Mgeorgiana_NewfieldsSquamscottNH_20160805_R1.fastq.gz &
+cat SpaEx0004_09_S24_L001_R2_001.fastq.gz SpaEx0004_09_S24_L002_R2_001.fastq.gz > 2631-22373_Mgeorgiana_NewfieldsSquamscottNH_20160805_R2.fastq.gz &
+cat SpaEx0004_10_S25_L001_R1_001.fastq.gz SpaEx0004_10_S25_L002_R1_001.fastq.gz > 2551-18706_Mmelodia_WertheimNY_20160723_R1.fastq.gz &
+cat SpaEx0004_10_S25_L001_R2_001.fastq.gz SpaEx0004_10_S25_L002_R2_001.fastq.gz > 2551-18706_Mmelodia_WertheimNY_20160723_R2.fastq.gz &
+cat SpaEx0004_11_S26_L001_R1_001.fastq.gz SpaEx0004_11_S26_L002_R1_001.fastq.gz > 2551-18698_Mmelodia_LittleCreekDE_20160630_R1.fastq.gz &
+cat SpaEx0004_11_S26_L001_R2_001.fastq.gz SpaEx0004_11_S26_L002_R2_001.fastq.gz > 2551-18698_Mmelodia_LittleCreekDE_20160630_R2.fastq.gz &
+cat SpaEx0004_12_S27_L001_R1_001.fastq.gz SpaEx0004_12_S27_L002_R1_001.fastq.gz > 2811-42022_Anelsoni_HarringtonME_20190801_R1.fastq.gz &
+cat SpaEx0004_12_S27_L001_R2_001.fastq.gz SpaEx0004_12_S27_L002_R2_001.fastq.gz > 2811-42022_Anelsoni_HarringtonME_20190801_R2.fastq.gz &
+cat SpaEx0004_13_S28_L001_R1_001.fastq.gz SpaEx0004_13_S28_L002_R1_001.fastq.gz > 2821-97737_Amaritima_OCForsytheNJ_20190712_R1.fastq.gz &
+cat SpaEx0004_13_S28_L001_R2_001.fastq.gz SpaEx0004_13_S28_L002_R2_001.fastq.gz > 2821-97737_Amaritima_OCForsytheNJ_20190712_R2.fastq.gz &
+cat SpaEx0004_14_S29_L001_R1_001.fastq.gz SpaEx0004_14_S29_L002_R1_001.fastq.gz > 2781-84949_Psandwichensis_ParkNarraguagusME_20190618_R1.fastq.gz &
+cat SpaEx0004_14_S29_L001_R2_001.fastq.gz SpaEx0004_14_S29_L002_R2_001.fastq.gz > 2781-84949_Psandwichensis_ParkNarraguagusME_20190618_R2.fastq.gz &
+cat SpaEx0004_15_S30_L001_R1_001.fastq.gz SpaEx0004_15_S30_L002_R1_001.fastq.gz > 2631-22792_Mgeorgiana_FishingBayMD_20190724_R1.fastq.gz &
+cat SpaEx0004_15_S30_L001_R2_001.fastq.gz SpaEx0004_15_S30_L002_R2_001.fastq.gz > 2631-22792_Mgeorgiana_FishingBayMD_20190724_R2.fastq.gz &
+
+To save disc space on Premise, the originial SpaEx000#_##_S##_L00#_R#_001.fastq.gz files were backed up (see 'Data Backup Information' section below) and deleted from Premise so only the concatenated and renamed files remain on the cluster (bgzip2 compressed after quality trimming, as noted above in the 'File List').
+    B. Adapters were identified with Adapter Removal ver. 2.3.1:
+    I was initially unsure what adapters were used on the libraries so I used AdapterRemoval to identify them for a couple samples. The below adapters listed (i.e., --adapter1 and --adapter2) were used in the adapter removal script. Output below -
+    
+AdapterRemoval --identify-adapters --file1 2631-22213_Psandwichensis_QuoddyBarME_20150808_R1.fastq.gz --file2 2631-22213_Psandwichensis_QuoddyBarME_20150808_R2.fastq.gz 
+
+Attempting to identify adapter sequences ...
+Opening FASTQ file '2631-22213_Psandwichensis_QuoddyBarME_20150808_R1.fastq.gz', line numbers start at 1
+Opening FASTQ file '2631-22213_Psandwichensis_QuoddyBarME_20150808_R2.fastq.gz', line numbers start at 1
+Processed a total of 67,602,246 reads in 12:13.4s; 92,000 reads per second on average ...
+   Found 25639874 overlapping pairs ...
+   Of which 4776667 contained adapter sequence(s) ...
+
+Printing adapter sequences, including poly-A tails:
+  --adapter1:  AGATCGGAAGAGCACACGTCTGAACTCCAGTCACNNNNNNATCTCGTATGCCGTCTTCTGCTTG
+               ||||||||||||||||||||||||||||||||||******   ||   |      |  |     
+   Consensus:                        AGATCGGAAGAGCACACGTCTGAACTCCAGTCACAGGTAAGGATCTCGTATGCCGTCTTCTGCTTGAAAAGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
+     Quality:  /.0/...0..//././.-,.--..---,-,,--,-,,,+,,+,++'*,*++**++***)))+)))*))()##'(***+++++++++++++++++*********************)))))))))))))))))((((((((((((((((((''''''''''''''''''&&&&&&&&&&&&&&&&&&&&&%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%$%$$$$$$$$$$$$$$$$$$#
+
+    Top 5 most common 9-bp 5'-kmers:
+            1: AGATCGGAA = 86.47% (3678101)
+            2: AGATCGGAC =  1.53% (65250)
+            3: AGATCTGAA =  1.34% (56895)
+            4: AGATAGGAA =  0.94% (40157)
+            5: ATATCGGAA =  0.70% (29719)
+
+
+  --adapter2:  AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT
+               |||||||||||||||||||||||||||||||||  |||  ||||   |          
+   Consensus:  AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTGAATCGTGGTGTGGGTGTGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
+     Quality:  0/10/000,001/0-./+/+,00.-++-,-+-,-,***-)/.$-$#*#%%$$--%..&(.'&.(&%&$%$$###$%()***+++++,,,,,,,,,,,,-,,,,,,,,,,,,,,++++,,,++++,,++++++++++++++++*********************))))))))))))))))))))))((((((((((((((((((((((('('((((((((((((((((((''''''&&&%%
+
+    Top 5 most common 9-bp 5'-kmers:
+            1: AGATCGGAA = 85.05% (3617326)
+            2: AGATCGGAC =  3.66% (155695)
+            3: AGATAGGAA =  1.01% (42905)
+            4: AGATCTGAA =  0.73% (31069)
+            5: ATATCGGAA =  0.71% (30335)
+
+AdapterRemoval --identify-adapters --file1 2631-22269_Mgeorgiana_WoodlandBeachDE_20160609_R1.fastq.gz --file2  2631-22269_Mgeorgiana_WoodlandBeachDE_20160609_R2.fastq.gz
+
+Attempting to identify adapter sequences ...
+Opening FASTQ file '2631-22269_Mgeorgiana_WoodlandBeachDE_20160609_R1.fastq.gz', line numbers start at 1
+Opening FASTQ file '2631-22269_Mgeorgiana_WoodlandBeachDE_20160609_R2.fastq.gz', line numbers start at 1
+Processed a total of 55,930,184 reads in 9:06.5s; 102,000 reads per second on average ...
+   Found 22775989 overlapping pairs ...
+   Of which 6919246 contained adapter sequence(s) ...
+
+Printing adapter sequences, including poly-A tails:
+  --adapter1:  AGATCGGAAGAGCACACGTCTGAACTCCAGTCACNNNNNNATCTCGTATGCCGTCTTCTGCTTG
+               ||||||||||||||||||||||||||||||||||******   ||   |      |  |     
+   Consensus:  AGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTAACATCATCTCGTATGCCGTCTTCTGCTTGAAAAAGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
+     Quality:  /.0..../-./.././.-,.--..---,-,,---,,--,-+,,*+'++*++**++*+**))+*))***))##')**++++++++++++++++++++++++++++******************))))))))))))))))))(((((((((((((('''''''''''''''''&&&&&&&&&&&&&&&&&&&&%%%%%%%%%%%%%%%%%%%$%$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+    Top 5 most common 9-bp 5'-kmers:
+            1: AGATCGGAA = 87.00% (5537673)
+            2: AGATCGGAC =  1.57% (99736)
+            3: AGATCTGAA =  1.05% (67018)
+            4: AGATAGGAA =  0.75% (47849)
+            5: ATATCGGAA =  0.55% (35158)
+
+
+  --adapter2:  AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT
+               ||||||||||||||||||||||||||||||||||      ||||     |        
+   Consensus:  AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAATCGCTGGTGTAGATCTCGGGGGGGGGGGGGGGAGTAAAAAGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
+     Quality:  00200110.011/0-./+.++00--++,,,+,+-***,+&.-','%*#&#%%.-$.-$&-%$-&$$$##$##$##%(**+++++++,,,,,,,,,,,---,,,,,,,,,,,,,,+++,,,,,,,,,,++++++++++++++++**********************)*)*))))))))))))))))))))((((((((((((((((((((('((((((((((((((((((((''''''&&&
+
+    Top 5 most common 9-bp 5'-kmers:
+            1: AGATCGGAA = 87.72% (5582708)
+            2: AGATCGGAC =  1.99% (126352)
+            3: AGATAGGAA =  0.79% (50562)
+            4: AGATCTGAA =  0.58% (37049)
+            5: ATATCGGAA =  0.58% (37031)
+
+    C. FastQC reports were generated with FastQC v0.11.5 and adapters were trimmed with Adapter Removal ver. 2.3.1:
+    DataPreProcessingScript.sh ver 1.3.1 was used to run fastQC on the raw reads and quality trim read termini. Metadata and stdout information from the analyses are available in the file DataPreProcessing-20200728_INVS-SP_LFe_SparrowWholeGenomeShotgun-slurmOutput-2021.01.30-22.24.yaml. DataPreProcessingAddendumScript.sh ver 1.3.1 also ran fastQC on the trimmed reads, multiqc on both sets of fastqc files, the adapter removal settings files, and the bcl2fastq data, and to archive and compress the raw reads. Metadata and stdout information from the analyses are available in the file DataPreProcessing-20200728_INVS-SP_LFe_SparrowWholeGenomeShotgun-slurmOutput-2021.01.30-22.24.yaml.
+
+3. Instrument- or software-specific information needed to interpret the data: 
+#<include full name and version of software, and any necessary packages or libraries needed to run scripts>
+Pooled libraries were sequenced on an Illumina NovaSeq6000 at Dana Farber Cancer Institute with SP-500 flow cell chemistry (full flow cell was used, i.e. 2 lanes) using 250-bp paired end sequencing.
+
+4. Standards and calibration information, if appropriate: 
+N/A
+
+5. Environmental/experimental conditions: 
+N/A
+
+6. Describe any quality-assurance procedures performed on the data: 
+    A.) Reports - contains the bcl2fastq reports
+    B.) Stats directory - files included/generated by Toni Westbrook (Hubbard Center for Genome Studies, University of New Hampshire) or as part of the Dana Farber sequencing service:
+        i.) AdapterTrimming.txt, which does not appear very informative, I assume because no adapter trimming was performed on the raw data. Otherwise, I believe it would list for each sample, the total number of bases trimmed for Read1 and Read 2/lane and the percent of bases trimmed, followed by a detailed histogram of the number of bases trimmed per read position for each sample.
+        ii.) DemuxSummaryF1L1.txt & DemuxSummaryF1L2.txt files, which lists, for each lane (lane 1 & 2 respectively, I assume the F# is if there is more than 1 flowcell to report on?) and tile number, the fraction of reads that were demuxed and assigned to each individual. Perhaps most usefully, there is a list at the end of the most common barcode combinations for the unknown reads.
+        iii.) FastqSummaryF1L1.txt & FastqSummaryF1L2.txt files, which appear to be a summary for each tile the total number of raw reads compared with the number of reads that passed the filter? (PF). Of note, a high proportion (~72% & ~60% respectively) of the unknown reads did not pass the filter, which probably contributes to why they are unknown. Still, a large number of reads DID pass the filter so there could be some good additional data there if it is possible to tease apart who all it belongs to. Only 1 mismatch in the indices was permitted during demultiplexing, so might be worth checking for 2 mismatches if the hamming distance of my indices permits.
+        iv.) ConversionStats.xml, DemultiplexingStats.xml & Stats.json files. These are all really detailed if you want to get into the nitty gritty - 
+            a.) ConversionStats provides a detailed list for every sample, lane, tile the raw cluster count (# of reads) and the number of clusters (reads) that passed the filter, and within those 2 categories, for each read number, the total yield, (which is the total number of bases read across all clusters), the yield with a quality greater than 30 (presumably the number of bases >Q30), and the quality score sum which I am guessing is the total base quality scores across all reads for that tile. 
+            b.) DemultiplexingStats.xml lists for each demultiplexed sample, on a per lane basis, the number of reads with perfectly matching indices and the number of reads with 1 mismatch in the indices that were included in the demultiplexed R1 and R2 files. 
+            c.) Stats.json - This file basically compiles the key data from the other 2 files (ConversionStats.xml, DemultiplexingStats.xml) as well as AdapterTrimming.txt into a different format. This is also the target file used by multiqc to summarize the bcl2fastq data.
+    C.) FastQC reports for the sequencing data were generated and manually assesed for the raw reads as well as post-adapter/quality trimming (contained in the directories called fastqcRawData and fastqcTrimmedData, respectively). Multiqc reporats were also generated for both sets of fastqc reports, as well as the bcl2fastq data, and the adapter removal settings. My summary and interpretation of the output QC reports is included in my electronic lab notebook.
+    D.) For this initial sequencing run, I also conducted extensive assessment of my adapter removal and quality trimming parameters and output to ensure that the pipeline was performing as expected and generating high quality analysis-ready reads. See my electronic lab notebook section entitled 'Sparrow Comparative Genomics > Methods > Data Preprocessing' for detailed justification of pipeline and methods as well as fastqc expectations and parameters for the raw and quality trimmed reads and Adapter Removal parameter evaluation.
+
+7. People involved with sample collection, processing, analysis and/or submission: 
+Sample Collection: I believe bleeding of birds was performed by Meghan Conway, Kenzie Roeder, Alice Hotopp, Jon Clark, Adrienne Kovach and Andrew Wiegardt and possibly other technicians (I havent figured out the initials in the SHARP database yet!)
+Sample Extraction: Lindsey Fenderson
+Library Prep: Library prep and pooling and iSeq sequencing was performed by Stephen Simpson (Hubbard Center for Genome Studies, University of New Hampshire)
+Sequencing: Kelley Thomas was responsible for getting these samples sequenced and these samples were submitted for sequencing at Dana-Farber Cancer Institute.
+Data processing and analysis and submission to NCBI: Lindsey Fenderson (These sequencing data have not been uploaded to NCBI and are not publicly available as of the current date of this document)
+
+DATA-SPECIFIC INFORMATION FOR: [FILENAME]
+<repeat this section for each dataset, folder or file, as appropriate>
+
+1. Number of variables: 
+N/A
+2. Number of cases/rows: 
+N/A
+3. Variable List: 
+<list variable name(s), description(s), unit(s)and value labels as appropriate for each>
+N/A
+4. Missing data codes: 
+<list code/symbol and definition>
+N = unknown nucleotide (or if present as a single 'N' in the quality trimmed reads fastq file, that the read was discarded, or that the read 2 was collapsed with its read 1 pair)
+5. Specialized formats or other abbreviations used: 
+
+SALS = saltmarsh sparrow (Ammospiza caudacutus)
+NESP = Nelson's sparrow (A. nelsoni)
+SESP = seaside sparrow (A. maritima)
+SOSP = song sparrow (Melospiza melodia)
+SWSP = swamp sparrow (M. georgiana)
+SAVS = savannah sparrow (Passerculus sandwichensis)
+
+IHS2000/IHS2500 = Illumina HiSeq (specify version, e.g. 2000 vs. 2500)
+IMS = Illumina MiSeq 
+INS550/INS2000 = Illumina NextSeq (specify version, e.g. 550 vs. 2000) 
+INVS-SP/INVS-S2/INVS-S3/INVS-S4 = Illumina NovaSeq (specify flowcell, e.g. SP, S2, S3, S4)
+PBS = PacBio Sequel 
+PBSII = PacBio Sequel II
+
+DATA BACKUP INFORMATION
+
+These data are currently stored on UNH's Premise cluster in the working directory /mnt/lustre/mel/shared/GECO/Data/SparrowRawData/20200728_INVS-SP_LFe_SparrowWholeGenomeShotgun
+
+These data have been backed up in the following locations:
+1.) Cloud storage - 
+In the Kovach Lab UNH BOX group storage drive:
+/Users/Lindsey/Box/KovachLab/Data/Sparrows/GECO/Data/SparrowRawData/20200728_INVS-SP_LFe_SparrowWholeGenomeShotgun
+
+2.) Physical hard drive - 
+On the "Sparrows" 3TB WD MyBook external hard drive (normally kept at the UNH campus in the Kovach lab in Rudman Hall):
+/Volumes/Sparrows/GECO/Data/SparrowRawData/20200728_INVS-SP_LFe_SparrowWholeGenomeShotgun
+
+MD5 Checksums have been compared and confirmed to be identical for all files in all locations as of 2021-02-08 except as noted:
+    Files that still need to be uploaded to Box:
+        - Undetermined
+        - all *truncated.bz2 files
+    
+    Files that still need to be backed up to SparrowsHD:
