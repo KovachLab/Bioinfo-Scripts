@@ -1,31 +1,40 @@
 #!/bin/bash
 #*********************************************************************#
 #Data Preprocessing Script by Lindsey Fenderson                       #
-#Current version 1.3.0 - May 17, 2021                                 #
+#Current version 1.3.1 - July 31, 2021                                #
 #Script for creating fastqc reports on newly sequenced data,          #
 #  (code for double checking barcodes if needed),                     #
 #  & trimming adapters with AdapterRemoval2 on UNH's Premise cluster. #
 #*********************************************************************#
 
 
-#Process assumes that sequencing data for the same individual generated on multiple lanes in the same sequencing run has already been concatenated and that the raw sequencing files have been named informatively according to the Kovach_Lab_File_Naming_SOPs (i.e., expected input files have 4 fields separated by underscores before the R1/R2 suffix, e.g.: IndividualID_Species_SamplingLocation_CaptureDate_R#.f*q - if this is not the case, the script will likely not work as expected and you'll need to edit throughout e.g., if the field separator isn't an underscore, or if there are a different number of fields before the R1 or R2 suffix etc...
+##To use this program:
+#   1.) ENSURE DATA IS BACKED UP BEFORE RUNNING
+#   *** As per our Kovach_Lab_Data_Management_User_Guide-START_HERE SOP, it is required that the raw sequencing reads are backed up in 2 separate locations (both in the cloud and on a physical hard drive located on campus) and that the integrity of the backups is confirmed PRIOR to running this script, since the combined raw read file archive may be too large to effectively upload or download to other backup locations (or it could get corrupted in the process) and the individual raw read files will be moved to the RecycleBin and eventually deleted once they are added to the archive (so you should still be able to access the raw reads if you decompress and unarchive the $Directory_RawSequencingReads.tar.bz2 file, however there is always a risk of data loss if the file gets corrupted). See above user guide for how to set up rclone to backup data to the cloud if you haven't done so already, and see https://github.com/KovachLab/Data_Management_Scripts/blob/master/FileBackupScript.sh for easily backing up data from the cluster to local hard drives.
+#   2.) PROPERLY NAME FILES AND CONCATENATE INDIVIDUAL READS FROM MULTIPLE LANES
+# Process assumes that sequencing data for the same individual generated on multiple lanes in the same sequencing run have already been concatenated and that the raw sequencing files have been named informatively according to the Kovach_Lab_File_Naming_SOPs (i.e., expected input files have 4 fields separated by underscores before the R1/R2 suffix, i.e.: IndividualID_Species_SamplingLocation_CaptureDate_R#.f*q. For example: cat SpaEx0003_01_S1_L001_R1_001.fastq.gz SpaEx0003_01_S1_L002_R1_001.fastq.gz > 2631-22269_Mgeorgiana_WoodlandBeachDE_20160609_R1.fastq.gz
+# In your working directory, also rename your undetermined/unknown fastq files to have the same naming structure as the other files to make the script happy (i.e., the name must start with "Undetermined" (or else edit the prefix in line 41), then add 3 additional dummy fields for the "species", "sampling location" and "capture date" fields, separated by an underscore, e.g.: Undetermined_UNK_NA_S0_R1.fastq.gz)
+#   3.) ENSURE RAW READS IN FASTQ FORMAT
+#Program assumes the raw reads are in fastq format (files can be compressed (any format, e.g., gzip or bzip2) or not) with a suffix involving .f*q* (e.g., .fq, .fastq, .fq.gz, .fastq.gz etc).
+#   4.) CONFIRM ANALYSIS PARAMETERS FOR FASTQC & ADAPTERREMOVAL2
+#All program parameters are set in associated parameter files. See example at /mnt/lustre/mel/shared/Scripts/DataPreProcessingScriptv1.3.0-Paramfile.txt. FASTQC parameters should also be provided in associated files at the paths listed in the paramfile (See examples also provided in the above 'Scripts' directory: adapter_list2.txt, contaminant_list2.txt, RawReadNovaseqFastQClimits2.txt, QTrimmedReadNovaseqFastQClimits2.txt). Parameters used will print to the slurm stdout file. Adapter Removal parameters should also be given in the paramfile; other parameters automatically used are described below in line 138; Adapter Removal paramaters used are recorded in the output .settings files and AdapterRemovalParameters pdfs.
+#   5.) ORGANIZE SEQUENCING METADATA INTO A "Sequencing_Metadata" DIRECTORY
+#Create a folder called "Sequencing_Metadata" and move any additional files that came with the sequencing data into that folder (e.g., folders called "Reports", "Stats"; files called "report", "statsPlate1", "MD5.txt", "Summary.txt", "checkSize.xls", "Rawdata_Readme.pdf" etc.). Since different sequencing providers include different files and differently-named files, by moving all relevant data to a commonly named directory will ensure that multiqc runs appropriately and that the metadata files are archived with the raw reads. 
+#  *** It is also HIGHLY recommended that you create a README file for your raw data to help ensure the longevity and usefulness of this data. See template at https://github.com/KovachLab/Bioinfo-Scripts/blob/main/Example_Directory_Raw-and-QualityTrimmedSequencingData_LFe_dataREADME.yaml and the example filled out README file at https://github.com/KovachLab/Bioinfo-Scripts/blob/main/20200728_INVS-SP_LFe_SparrowWholeGenomeShotgun_dataREADME.yaml. This file can be stored in the main folder with the raw reads for later editing (if the filename includes the pattern "README" it will be backed up to the cloud in a directory called 'README-File'), or else in the Sequencing_Metadata directory where it will be archived.
+#   6.) RUN PROGRAM 
+#  -> Before running the script you need to 1.) assign the location of your parameter file as a variable, 2.) then add that argument to your sbatch job submission command. For example, you would use something like the following 2 command lines:
+# export ParamFile=/mnt/lustre/mel/shared/Scripts/DataPreProcessingScriptv1.3.1-Paramfile.txt
+# sbatch ./LEF-FinalDataPreProcessingSlurmScript.sh –export=ParamFile
+# ***It is recommended to use an informative slurm script which records additional pertinant details about the analysis run and importantly, names the slurm output informatively so you're not just left with a million unidentifiable slurm-#####.out files at the end of your project. See an example template at https://github.com/KovachLab/Bioinfo-Scripts/blob/main/BioinformaticBookkeepingSlurmTemplate.sh and the one I actually use at https://github.com/KovachLab/Bioinfo-Scripts/blob/main/LEF-FinalDataPreProcessingSlurmScript.sh. Snakemake is another good option for ensuring your analyses are well documented and reproducible.
 
 ##Expected output of this program: 
-# 1.) This program will generate fastqc analysis reports on the individual R1 and R2 raw sequencing data and output them to the folder 'fastqcRawData'.
-# 2.) The program then quality trims adapters and low quality termini from reads and collapses overlapping read pairs using AdapterRemoval2. Output files will have the same root name as the input fastq files, with the suffix .pair#.truncated.bz2 (where # is the number 1 or 2 for reads 1 or 2 respectively). This script also generates charts and reports summarizing the read number and length distribution statistics before and after trimming, in the directory AdapterRemovalSettings.
-# 3.) The program will then generate fastqc analysis reports on the individual R1 and R2 quality trimmed sequencing data generated in step 2 and output them to the folder 'fastqcTrimmedData'. 
-# 4.) The program also runs multiQC and generates summary charts and reports for the bcl2fastq data (if available), the raw and trimmed fastQC reports, and the Adapter Removal files.
-# 5.) Finally, the program also performs some data and file cleanup and compression to best preserve disc space; archiving all of the raw reads along with any sequencer metadata and the adapter removal settings files in $Directory_RawSequencingReads.tar.bz2, and archiving all of the multiQC and fastQC output for the raw and trimmed reads in $Directory_QCReports.tar.bz2. These files, along with all of the pdf Adapter Removal Settings files and QC reports are organized into the directory "RawReads-and-SequencingPreProcessingData". Copies of the pdf output are automatically backed up to the cloud (e.g., Box) and LaTeX code written to easily import and index the pdfs into an electronic lab notebook. The script also records the fastqc, multiqc and AdapterRemoval program version numbers that were used near the top of the slurm output file.
+# 1.) RAW READ FASTQC REPORTS: This program will generate fastqc analysis reports on the individual R1 and R2 raw sequencing data and output them to the folder 'fastqcRawData'.
+# 2.) QUALITY TRIMMING & ADAPTER REMOVAL: The program then quality trims adapters and low quality termini from reads and collapses overlapping read pairs using AdapterRemoval2. Output files will have the same root name as the input fastq files, with the suffix .pair#.truncated.bz2 (where # is the number 1 or 2 for reads 1 or 2 respectively). This script also generates charts and reports summarizing the read number and length distribution statistics before and after trimming, in the directory AdapterRemovalSettings.
+# 3.) QUALITY TRIMMED READ FASTQC REPORTS: The program will then generate fastqc analysis reports on the individual R1 and R2 quality trimmed sequencing data generated in step 2 and output them to the folder 'fastqcTrimmedData'. 
+# 4.) MULTIQC REPORTS: The program also runs multiQC and generates summary charts and reports for the bcl2fastq data (if available), the raw and trimmed fastQC reports, and the Adapter Removal files.
+# 5.) DATA CLEANUP & ARCHIVING: Finally, the program performs some data and file cleanup and compression to best preserve disc space; archiving all of the raw reads along with any sequencer metadata and the adapter removal settings files in $Directory_RawSequencingReads.tar.bz2, and archiving all of the multiQC and fastQC output for the raw and trimmed reads in $Directory_QCReports.tar.bz2. These files, along with all of the pdf Adapter Removal Settings files and QC reports are organized into the directory "RawReads-and-SequencingPreProcessingData". Copies of the pdf output are automatically backed up to the cloud (e.g., Box) and LaTeX code written to easily import and index the pdfs into an electronic lab notebook. The script also records the fastqc, multiqc and AdapterRemoval program version numbers that were used near the top of the slurm output file.
 
-##To use this program:
-#   1.) Program assumes the raw reads are in fastq format (files can be compressed (any format, e.g., gzip or bzip2) or not) with a suffix involving fq or fastq. If not, change the suffix as needed in lines 41 and 445.
-#   2.)  FASTQC parameters should be provided in associated files at the paths listed in the paramfile. Parameters used will print to the slurm stdout file. Adapter Removal parameters should also be given in the paramfile; other parameters automatically used are described below in line 133; Adapter Removal paramaters used are recorded in the output .settings files and AdapterRemovalParameters pdfs.
-#   3.) Edit "Reports" and "Stats" and/or add the directory names or add any other files as needed for the raw sequencing metadata to be archived with the raw reads as relevant for your data (e.g, "report", "statsPlate1", "MD5.txt", "Summary.txt", "checkSize.xls", "Rawdata_Readme.pdf" etc.) in lines 421-422(+). Be sure to include the absolute or relative path if for some reason the files or directories are not in the working directory.
-#   4.) In your working directory, rename your undetermined/unknown fastq files to have the same naming structure as the other files to make the script happy (i.e., the name must start with "Undetermined" (or else edit the prefix in line 41), then add 3 additional dummy fields for the "species", "sampling location" and "capture date" fields, separated by an underscore, e.g.: Undetermined_UNK_NA_S0_R1.fastq.gz)
-
-
-#   ***Note 1: As per our Kovach_Lab_Data_Management_User_Guide-START_HERE SOP, it is required that the raw sequencing reads are backed up in 2 separate locations (both in the cloud and on a physical hard drive located on campus) and that the integrity of the backups is confirmed PRIOR to running this script, since the combined raw read file archive may be too large to effectively upload or download to other backup locations (or it could get corrupted in the process) and the individual raw read files will be deleted once they are added to the archive (so you should still be able to access the raw reads if you decompress and unarchive the $Directory_RawSequencingReads.tar.bz2 file, however there is always a risk of data loss if the file gets corrupted). As noted above, the raw reads also need to be concatenated and named according to our SOPs.
-source /mnt/lustre/mel/shared/Scripts/DataPreProcessingScriptv1.3.0-Paramfile.txt
+source ${ParamFile} #/mnt/lustre/mel/shared/Scripts/DataPreProcessingScriptv1.3.1-Paramfile.txt
 
 module purge
 module load linuxbrew/colsa
@@ -55,16 +64,23 @@ CycleLength=$(echo "($ReadLength - 1)" | bc)
 Maxn=$(echo "($CycleLength * $PctNs)" | bc)
 MaxNs=$( printf "%.0f" $Maxn )
 #minalignmentlength=11
+echo -e "\n *** Copy of Parameter File Used in This Analysis *** \n\n"
+while read ParamFile; do
+    echo -e $ParamFile
+done< ${ParamFile}
+
 #Run fastqc
 echo -e "\n *** RUNNING FASTQC ON RAW READS *** \n\n"
-echo -e "FastQC parameter limits for raw read data:"
-while read RawFastQCFile; do
-    echo -e $RawFastQCFile
-done< $RawFastQCLimitsFile  
 
+echo -e "\n FastQC in progress... \n\n"
 while read AllFilesToProcess; do
     fastqc --limits $RawFastQCLimitsFile --adapters $AdapterFile --contaminants $ContaminantFile --kmers $kmersize -o fastqcRawData -t 24 -f fastq $AllFilesToProcess
 done< AllFilesToProcess
+
+echo -e "\n FastQC parameter limits for raw read data: \n\n"
+while read RawFastQCFile; do
+    echo -e $RawFastQCFile
+done< $RawFastQCLimitsFile  
 
 #Create a root name list
 cut -d"_" -f1-4 AllFilesToProcess > RootName
@@ -146,15 +162,25 @@ mkdir fastqcTrimmedData
 #Create a list of files to be processed (does not process Undetermined fastq files)
 ls --ignore=Undetermined* | grep .truncated.bz2 > TrimmedFiles
 echo -e "\n\n *** RUNNING FASTQC ON TRIMMED READS *** \n\n"
+echo -e "\n FastQC in progress... \n\n"
+while read TrimmedFiles; do
+     fastqc --limits $QTrimmedFastQCLimitsFile --adapters $AdapterFile --contaminants $ContaminantFile --kmers $kmersize -o fastqcTrimmedData -t 24 -f fastq $TrimmedFiles
+done< TrimmedFiles
 
 echo -e "FastQC parameter limits for quality trimmed read data:"
 while read TrimmedFastQCFile; do
     echo -e $TrimmedFastQCFile
 done< $QTrimmedFastQCLimitsFile  
 
-while read TrimmedFiles; do
-     fastqc --limits $QTrimmedFastQCLimitsFile --adapters $AdapterFile --contaminants $ContaminantFile --kmers $kmersize -o fastqcTrimmedData -t 24 -f fastq $TrimmedFiles
-done< TrimmedFiles
+echo -e "\n FastQC contaminants list: \n\n"
+while read ContaminantFile; do
+    echo -e $ContaminantFile
+done< $ContaminantFile
+
+echo -e "\n FastQC adapter list: \n\n"
+while read AdapterFile; do
+    echo -e $AdapterFile
+done< $AdapterFile
 
 #Start LaTeX code for ELN
 touch $Directory-ELNLaTeXCodeFastQCTrimmedReads.txt
@@ -429,7 +455,16 @@ echo -e "\n\n *** RUNNING MULTIQC *** \n\n"
 module purge
 module load anaconda/colsa
 conda activate multiqc-1.10.1
-multiqc Stats/ fastqcRawData/ AdapterRemovalSettings/ fastqcTrimmedData/
+if [ -d "./Sequencing_Metadata" ] 
+then
+    echo "Directory Sequencing_Metadata exists."
+    multiqc Sequencing_Metadata/ --filename Sequencing_Metadata-multiqc
+else
+    echo "Error: Directory Sequencing_Metadata does not exist."
+fi
+multiqc fastqcRawData/ --filename fastqcRawData-multiqc
+multiqc AdapterRemovalSettings/ --filename AdapterRemovalSettings-multiqc
+multiqc fastqcTrimmedData/ --filename fastqcTrimmedData-multiqc
 module purge
 module load linuxbrew/colsa
 
@@ -446,12 +481,12 @@ mkdir QCReports/MultiQCReports
 mkdir QCReports/FastQCReports
 rsync -acv fastqcRawData QCReports/FastQCReports/
 rsync -acv fastqcTrimmedData QCReports/FastQCReports/
-rsync -acv multiqc_data QCReports/MultiQCReports
-rsync -acv multiqc_report.html QCReports/MultiQCReports
+rsync -acv *multiqc_data QCReports/MultiQCReports
+rsync -acv *multiqc.html QCReports/MultiQCReports
 rm -r fastqcRawData
 rm -r fastqcTrimmedData
-rm -r multiqc_data
-rm multiqc_report.html
+rm -r *multiqc_data
+rm *multiqc.html
 
 #Create a list of files to be processed (DOES include Undetermined fastq files)
 echo "\n\n *** CALCULATING FILE MD5SUMs *** \n\n"
@@ -466,8 +501,7 @@ find $SourceLocation -type f \( ! -path '*/.*' \) \( -not -name "$SourceFilename
 #Archive and compress the raw sequencing reads and reports
 echo "\n\n *** ARCHIVING & COMPRESSING RAW SEQUENCING READS & ADAPTER REMOVAL FILES *** \n\n"
 ls *.f*q* > AllFilesToArchive
-echo Reports >> AllFilesToArchive
-echo Stats >> AllFilesToArchive
+echo Sequencing_Metadata >> AllFilesToArchive
 echo AdapterRemovalSettings >> AllFilesToArchive
 tar cvfj "$Directory"_RawSequencingReads.tar.bz2 -T AllFilesToArchive
 #find $SourceLocation -type f \( -name $Directory_RawSequencingReads.tar.bz2 \) -exec md5sum '{}' \; >> $SourceFilename
@@ -475,8 +509,14 @@ tar cvfj "$Directory"_RawSequencingReads.tar.bz2 -T AllFilesToArchive
 Path=$(pwd)
 export https_proxy=http://premise.sr.unh.edu:3128
 rclone copy $LocalConfigID:$Path/AdapterRemovalSettings $BoxConfigID:$BoxPath$Directory/AdapterRemovalSettings
-$RecycleBin -r Reports
-$RecycleBin -r Stats
+if compgen "*README*" > /dev/null; then
+    echo "README file exists"
+    rclone copy $LocalConfigID:$Path/ --include "*README*" $BoxConfigID:$BoxPath$Directory/README-File
+else
+    echo "README file not found";
+fi
+
+$RecycleBin Sequencing_Metadata
 $RecycleBin AdapterRemovalSettings
 $RecycleBin *.f*q*
 
