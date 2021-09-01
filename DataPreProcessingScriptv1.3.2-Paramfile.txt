@@ -1,3 +1,4 @@
+InputDataPath="/mnt/lustre/mel/shared/GECO/Data/SparrowRawData/20210517_INVS-S4_LFe_SparrowWholeGenomeShotgun/" #The directory containing the raw reads to be quality trimmed.
 #Location of FastQC parameter files:
 RawFastQCLimitsFile=/mnt/lustre/mel/leq29/BioinformaticScripts/RawReadNovaseqFastQClimits2.txt
 QTrimmedFastQCLimitsFile=/mnt/lustre/mel/leq29/BioinformaticScripts/QTrimmedReadNovaseqFastQClimits2.txt
@@ -11,6 +12,8 @@ PctNs=0.60  # Percent of read length that can be Ns before the read is discarded
 TrimWin=0.1 # Window size used for assessing the average base call quality, expressed as a percent of total read length.
 MinQual=23 # Minimum base call quality threshold
 MinLength=30 # Minimum retained read length (# of base pairs)
+Adapter1=AGATCGGAAGAGCACACGTCTGAACTCCAGTCACNNNNNNNNATCTCGTATGCCGTCTTCTGCTTG #The Illumina indexing adapter 1 (i7 index/P7 adapter). You can use 'N's' for the unique individual barcodes so all samples in a batch can be processed at once.
+Adapter2=AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTNNNNNNNNGTGTAGATCTCGGTGGTCGCCGTATCATT #The Illumina indexing adapter 2 (i5 barcode/P5 adapter).
 
 ##Backup parameters:
 LocalConfigID='Premise' #The rclone name for your config file for the local cluster used for analysis.
