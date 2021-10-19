@@ -1,0 +1,47 @@
+#Define input data:
+
+InputDataPath="/mnt/lustre/mel/shared/GECO/Data/SparrowRawData/20200518_IHS2500_KTh-JSe-LFe_SparrowWholeGenomeShotgun/" #The directory containing the quality trimmed files to be mapped.
+QualityTrimmedReadSuffix="truncated.bz2" #The suffix common to all of your quality trimmed reads that are ready to be mapped. If you used the DataPreProcessingScript or AdapterRemoval2 to prepare your raw reads, you can leave these as is, otherwise edit as needed for your data. All files with this suffix in your $InputDataPath will be aligned to your selected reference genome.
+QualityTrimmedReadSuffix1=".pair1.truncated.bz2" #As above, but including the read 1 suffix.
+QualityTrimmedReadSuffix2=".pair2.truncated.bz2" #As above, but with the read 2 suffix.
+
+#----------------------------------------------------#
+
+#Set output information:
+
+#Set the reference genome & genome suffix to the species you want to map all of your samples to here, using the below variables (basically just change the 4-letter alpha code for whatever species you want, and be sure to keep the '$' sign, e.g., $TAEGUTReferenceGenome and $TAEGUTReferenceGenomeSuffix). If you want to map a mixed batch of our 6 target species to their respective species genomes, you can map them all at once to their reference genomes if they have been named properly according to the Kovach_Lab_File_Naming_SOPs (i.e., UniqueID_Species_SamplingLocation_DateCollected, where the "Species" part of the name is one of (must match exactly, including capitalization): Acaudacuta, Anelsoni, Amaritima, Mmelodia, Mgeorgiana, or Psandwichensis). To map a mixed batch of sparrows simply set the below ReferenceGenome variable to "GECOSparrowSpecies" (no $ sign) and the ReferenceGenomeSuffix to "GECOSparrowSpeciesSuffix". *** Note that known hybrid individuals (e.g., species name field: Acaudacutaxnelsoni) will automatically be mapped to both parent species reference genomes. 
+ReferenceGenome="$WTSPReferenceGenome"
+ReferenceGenomeSuffix="$WTSPReferenceGenomeSuffix"
+
+Platform="ILLUMINA" #The platform the data were sequenced on. Choose from 'CAPILLARY', 'DNBSEQ' (MGI/BGI), 'HELICOS', 'ILLUMINA', 'IONTORRENT', 'LS454', 'ONT' (Oxford Nanopore), 'PACBIO' (Pacific Biosciences), and 'SOLID' This info becomes part of the read group ID.
+Library="DiluteKAPAHyperPlus-Shotgun-DD022020" #The name of your library prep pool. This name should apply to all samples in the batch being mapped and should be descriptive enough to know how and when the libraries were prepared, in order to be able to accurately distinguish among batches (e.g., should generally have a format of LibraryPrepMethod/Kit-Type-DDMMYYYY (Date library was prepared)). This gets embedded in the bam read group header, so reads from the same sample that were treated in different ways can be merged and it is still possible to tease apart the separate results (e.g., compare percent of mapped reads for a shotgun library vs. a GT-Seq or RADSeq library).
+OutputDataPath="/mnt/lustre/mel/shared/GECO/Data/Mapped_Data/Zalbicollis/FINALDraft/" #The path where you want your mapped .bam files to end up. Generally, on Premise this should be /mnt/lustre/mel/shared/GECO/Data/Mapped_Data/<Respective Species Directory> so that all GECO data stays well organized, then you can call your samples from there for downstream analyses. If you are mapping a batch of mixed sparrow species you don't need to edit this; the program will automatically sort the mapped species files into their respective species directories (see below OutputDataPaths).
+
+#----------------------------------------------------#
+
+#The following section should not need to be changed unless the paths to the reference genomes changes, the genomes are updated, or to add new organisms/references:
+WTSPReferenceGenome="/mnt/lustre/mel/shared/GECO/ReferenceGenomes/WhiteThroatedSparrow/Zalbicollis-1.0.1"
+WTSPReferenceGenomeSuffix="Zalbicollis-1.0.1"
+SALSReferenceGenome="/mnt/lustre/mel/shared/GECO/ReferenceGenomes/SaltmarshSparrow/2741-17545_Acaudacutus"
+SALSReferenceGenomeSuffix="2741-17545_Acaudacutus"
+SALSOutputDataPath="/mnt/lustre/mel/shared/GECO/Data/Mapped_Data/Acaudacuta/"
+NESPReferenceGenome="/mnt/lustre/mel/shared/GECO/ReferenceGenomes/NelsonsSparrow/2391-71617_AnelsoniDRAFT"
+NESPReferenceGenomeSuffix="2391-71617_AnelsoniDRAFT"
+NESPOutputDataPath="/mnt/lustre/mel/shared/GECO/Data/Mapped_Data/Anelsoni/"
+SESPReferenceGenome="/mnt/lustre/mel/shared/GECO/ReferenceGenomes/SeasideSparrow/2551-18819_AmaritimaDRAFT"
+SESPReferenceGenomeSuffix="2551-18819_AmaritimaDRAFT"
+SESPOutputDataPath="/mnt/lustre/mel/shared/GECO/Data/Mapped_Data/Amaritima/"
+SOSPReferenceGenome="/mnt/lustre/mel/shared/GECO/ReferenceGenomes/SongSparrow/ASM1339820v1_Mmelodia"
+SOSPReferenceGenomeSuffix="ASM1339820v1_Mmelodia"
+SOSPOutputDataPath="/mnt/lustre/mel/shared/GECO/Data/Mapped_Data/Mmelodia/"
+SWSPReferenceGenome="/mnt/lustre/mel/shared/GECO/ReferenceGenomes/SwampSparrow/2811-41907_MgeorgianaDRAFT"
+SWSPReferenceGenomeSuffix="2811-41907_MgeorgianaDRAFT"
+SWSPOutputDataPath="/mnt/lustre/mel/shared/GECO/Data/Mapped_Data/Mgeorgiana/"
+SAVSReferenceGenome="/mnt/lustre/mel/shared/GECO/ReferenceGenomes/SavannahSparrow/2821-14815_PsandwichensisDRAFT"
+SAVSReferenceGenomeSuffix="2821-14815_PsandwichensisDRAFT"
+SAVSOutputDataPath="/mnt/lustre/mel/shared/GECO/Data/Mapped_Data/Psandwichensis/"
+TAEGUTReferenceGenome="/mnt/lustre/mel/shared/GECO/ReferenceGenomes/ZebraFinch/Tguttata_bTaeGut1.4.pri"
+TAEGUTReferenceGenomeSuffix="Tguttata_bTaeGut1.4.pri"
+DomesticChickenReferenceGenome="/mnt/lustre/mel/shared/GECO/ReferenceGenomes/DomesticChicken/Ggallus_GRCg6a"
+DomesticChickenReferenceGenomeSuffix="Ggallus_GRCg6a"
+#----------------------------------------------------#
