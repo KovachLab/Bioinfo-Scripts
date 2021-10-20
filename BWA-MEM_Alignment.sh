@@ -1,7 +1,7 @@
 #!/bin/bash
 #************************************************************************#
 #BWA-MEM_Alignment Script by Lindsey Fenderson                           #
-#Current version 1.2.0 - August 9, 2021                                  #
+#Current version 1.3.1 - October 18, 2021                                #
 #Pipeline for mapping fastq reads to a reference genome with the BWA-MEM # 
 #  algorithm and additional quality control steps based on the GATK Best # 
 #  Practices Data Pre-Processing for Variant Discovery Pipeline          #
@@ -26,61 +26,128 @@
 module purge
 module load linuxbrew/colsa
 source ${ParamFile} 
-cd $OutputDataPath
-
-#Create a list of files to be processed
-
-ls $InputDataPath*$QualityTrimmedReadSuffix > FilesToProcess
-sed -i 's,'"$InputDataPath"',,g' FilesToProcess
-
-#Create a root name list
-cut -d"." -f1 FilesToProcess > RootName
-sort RootName | uniq > UniqRootName
 
 #Map reads to reference genome
 if [ $ReferenceGenome == "GECOSparrowSpecies" ]; then
+    cd /mnt/lustre/mel/shared/GECO/Data/MappedData
+    #Create a list of files to be processed
+    Directory=$(echo $InputDataPath | rev | cut -d'/' -f 2 | rev)
+    ls $InputDataPath*$QualityTrimmedReadSuffix > FilesToProcess$Directory
+    sed -i 's,'"$InputDataPath"',,g' FilesToProcess$Directory
+
+    #Create a root name list
+    cut -d"." -f1 FilesToProcess$Directory > RootName$Directory
+    sort RootName$Directory | uniq > UniqRootName$Directory
      echo -e "Mapping samples to their respective GECO species genomes (saltmarsh, Nelson's, seaside, song, swamp and/or savannah sparrow)"
-     grep caudacuta UniqRootName > SALSUniqRootName
-     grep nelsoni UniqRootName > NESPUniqRootName
-     grep maritima UniqRootName > SESPUniqRootName
-     grep melodia UniqRootName > SOSPUniqRootName
-     grep georgiana UniqRootName > SWSPUniqRootName
-     grep sandwichensis UniqRootName > SAVSUniqRootName
+     grep caudacuta UniqRootName$Directory > SALSUniqRootName$Directory
+     grep nelsoni UniqRootName$Directory > NESPUniqRootName$Directory
+     grep maritima UniqRootName$Directory > SESPUniqRootName$Directory
+     grep melodia UniqRootName$Directory > SOSPUniqRootName$Directory
+     grep georgiana UniqRootName$Directory > SWSPUniqRootName$Directory
+     grep sandwichensis UniqRootName$Directory > SAVSUniqRootName$Directory
      for value in SALS NESP SESP SOSP SWSP SAVS
           do
           echo -e "Checking if $value samples exist."
-          if [ `wc -l $value"UniqRootName" | awk '{print $1}'` -ge "1" ]; then
+          if [ `wc -l $value"UniqRootName"$Directory | awk '{print $1}'` -ge "1" ]; then
                echo -e "Mapping $value samples to $value genome."
-               while read UniqRootName; do
-                    if [ `wc -l $value"UniqRootName" | awk '{print $1}'` -ge "1" ]; then
-                    File1="$UniqRootName$QualityTrimmedReadSuffix1"
-                    File2="$UniqRootName$QualityTrimmedReadSuffix2"
-                    echo -e "The following files are being mapped: File1 = $File1 & File2 = $File2"
-                    Read1="$InputDataPath$File1"
-                    echo -e "Files being mapped with their full paths:"
-                    echo -e "Read1 = $Read1"
-                    Read2="$InputDataPath$File2"
-                    echo -e "Read2 = $Read2"
-		            
-                    RefGenome=$(grep -w "$value"ReferenceGenome"" /mnt/lustre/mel/shared/Scripts/ReferenceGenomesList | cut -d"=" -f2); ReferenceGenome=$(sed -e 's/^"//' -e 's/"$//' <<<"$RefGenome")
-                    echo -e "Target reference genome is $ReferenceGenome"
-                    RefGenomeSuffix=$(grep -w "$value"ReferenceGenomeSuffix"" /mnt/lustre/mel/shared/Scripts/ReferenceGenomesList | cut -d"=" -f2); ReferenceGenomeSuffix=$(sed -e 's/^"//' -e 's/"$//' <<<"$RefGenomeSuffix")
-                    echo -e "Reference genome suffix is $ReferenceGenomeSuffix"
-                    OutDataPath=$(grep -w "$value"OutputDataPath"" /mnt/lustre/mel/shared/Scripts/ReferenceGenomesList | cut -d"=" -f2); OutputDataPath=$(sed -e 's/^"//' -e 's/"$//' <<<"$OutDataPath")
-                    echo -e "Output data path is $OutputDataPath"
-                    echo -e "Checking if samples already exist."
-                    ls *.bam > ExistingMappedReads
-                    sed -i 's,'"_trimmed-bwamem-$ReferenceGenomeSuffix.sorted.bam"',,g' ExistingMappedReads
-                    cat $value"UniqRootName" ExistingMappedReads > FutureMappedSamples
-                    sort FutureMappedSamples | uniq -d > DuplicateLibraries
-                    comm -23 $value"UniqRootName" DuplicateLibraries > UniqLibraries
-                    rm ExistingMappedReads FutureMappedSamples
-                    if [ `wc -l "DuplicateLibraries" | awk '{print $1}'` -ge "1" ]; then
-                        echo -e "Duplicate samples already exist. Assuming the duplicates are from separate libraries or sequencing runs and will merge mapped bams from the same individual"
-                        mkdir -p $OutputDataPath/temp
-                    else
-                        echo -e "No duplicate samples found. Continuing mapping pipeline."
-                    fi
+               RefGenome=$(grep -w "$value"ReferenceGenome"" /mnt/lustre/mel/shared/Scripts/ReferenceGenomesList | cut -d"=" -f2); ReferenceGenome=$(sed -e 's/^"//' -e 's/"$//' <<<"$RefGenome")
+                echo -e "Target reference genome is $ReferenceGenome"
+                RefGenomeSuffix=$(grep -w "$value"ReferenceGenomeSuffix"" /mnt/lustre/mel/shared/Scripts/ReferenceGenomesList | cut -d"=" -f2); ReferenceGenomeSuffix=$(sed -e 's/^"//' -e 's/"$//' <<<"$RefGenomeSuffix")
+                echo -e "Reference genome suffix is $ReferenceGenomeSuffix"
+                OutDataPath=$(grep -w "$value"OutputDataPath"" /mnt/lustre/mel/shared/Scripts/ReferenceGenomesList | cut -d"=" -f2); OutputDataPath=$(sed -e 's/^"//' -e 's/"$//' <<<"$OutDataPath")
+                echo -e "Output data path is $OutputDataPath"
+                echo -e "Checking if samples already exist."
+                ls ${OutputDataPath}*sorted.bam > ExistingMappedReads$Directory
+                sed -i 's,'"$OutputDataPath"',,g' ExistingMappedReads$Directory
+                sed -i 's,'"_trimmed-bwamem-$ReferenceGenomeSuffix.sorted.bam"',,g' ExistingMappedReads$Directory
+                cat $value"UniqRootName"$Directory ExistingMappedReads$Directory > FutureMappedSamples$Directory
+                sort FutureMappedSamples$Directory | uniq -d > DuplicateLibraries$Directory
+                comm -23 $value"UniqRootName"$Directory DuplicateLibraries$Directory > UniqLibraries$Directory
+
+                if [ `wc -l "DuplicateLibraries" | awk '{print $1}'` -ge "1" ]; then
+                    echo -e "Duplicate samples already exist. Assuming the duplicates are from separate libraries or sequencing runs and will merge mapped bams from the same individual"
+                    mkdir -p $OutputDataPath/temp
+        
+                    while read DuplicateLibraries; do
+                        File1="$DuplicateLibraries$QualityTrimmedReadSuffix1"
+                        File2="$DuplicateLibraries$QualityTrimmedReadSuffix2"
+                        echo -e "The following files are being mapped: File1 = $File1 & File2 = $File2"
+                        Read1="$InputDataPath$File1"
+                        echo -e "Files being mapped with their full paths:"
+                        echo -e "Read1 = $Read1"
+                        Read2="$InputDataPath$File2"
+                        echo -e "Read2 = $Read2"
+                        #Extract header information from fastq file
+                        header=$(less $Read1 | head -n 1)
+                        id=$(echo $header | head -n 1 | cut -f 1-4 -d":" | sed 's/@//' | sed 's/M_//g')
+                        #Run bwa-mem
+                        bwa mem -t $SLURM_CPUS_PER_TASK -R "@RG\tID:${id}\tSM:${DuplicateLibraries}\tLB:${Library}\tPL:${Platform}" -a -q -Y -K 80000000 $ReferenceGenome <(bzip2 -dc $Read1) <(bzip2 -dc $Read2) > "${OutputDataPath}"temp/"${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sam"
+                         #"Because BWA can sometimes leave unusual FLAG information on SAM records, it is helpful when working with many tools to first clean up read pairing information and flags" #This command runs samtools fixmate, which fills in mate coordinates, ISIZE and mate related flags from a name-sorted alignment, and also sets the output format to bam. I opted to just use the defaults and did not include the flags to Remove secondary and unmapped reads (-r), Disable FR proper pair check (-p), Add template cigar ct tag (-c), Add ms (mate score) tags (-m) (These are used by markdup to select the best reads to keep), or Do not add a @PG line to the header of the output file (--no-PG). I suppose I would use the mate score tags if I used the samtools markdup tool instead of Picardtools MarkDuplicates...
+                        samtools fixmate -m -O bam ${OutputDataPath}"temp/"${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sam ${OutputDataPath}"temp/"${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.bam
+                        #Most subsequent tools require coordinate-sorted (instead of read name-sorted) bam files and bam files need to be indexed to facilitate their use with various tools, hence the next 2 commands.
+                        samtools sort -O bam -o ${OutputDataPath}"temp/"${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sorted.bam ${OutputDataPath}"temp/"${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.bam
+                        samtools index ${OutputDataPath}"temp/"${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sorted.bam
+                        #Merge duplicate bam files, re-sort the merged bam file and index the new merged bam file.
+                        samtools merge ${OutputDataPath}${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.merged.bam ${OutputDataPath}${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sorted.bam ${OutputDataPath}"temp/"${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sorted.bam
+                        samtools sort -O bam -o ${OutputDataPath}${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.merged.sorted.bam ${OutputDataPath}${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.merged.bam
+                        samtools index ${OutputDataPath}${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.merged.sorted.bam
+                        #Cleanup temp files
+                        rm ${OutputDataPath}"temp/"${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sam
+                        rm ${OutputDataPath}"temp/"${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.bam
+                        ##rm ${OutputDataPath}${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sorted.bam 
+                        ##rm ${OutputDataPath}"temp/"${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sorted.bam
+                        rm ${OutputDataPath}${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.merged.bam
+                    done< DuplicateLibraries$Directory
+                    
+                    while read UniqLibraries; do
+                        File1="$UniqLibraries$QualityTrimmedReadSuffix1"
+                        File2="$UniqLibraries$QualityTrimmedReadSuffix2"
+                        echo -e "The following files are being mapped: File1 = $File1 & File2 = $File2"
+                        Read1="$InputDataPath$File1"
+                        echo -e "Files being mapped with their full paths:"
+                        echo -e "Read1 = $Read1"
+                        Read2="$InputDataPath$File2"
+                        echo -e "Read2 = $Read2"
+                        #Extract header information from fastq file
+                        header=$(less $Read1 | head -n 1)
+                        id=$(echo $header | head -n 1 | cut -f 1-4 -d":" | sed 's/@//' | sed 's/M_//g')
+                        #Run bwa-mem
+                        bwa mem -t $SLURM_CPUS_PER_TASK -R "@RG\tID:${id}\tSM:${UniqLibraries}\tLB:${Library}\tPL:${Platform}" -a -q -Y -K 80000000 $ReferenceGenome <(bzip2 -dc $Read1) <(bzip2 -dc $Read2) > "${OutputDataPath}${UniqLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sam"
+                         #"Because BWA can sometimes leave unusual FLAG information on SAM records, it is helpful when working with many tools to first clean up read pairing information and flags" #This command runs samtools fixmate, which fills in mate coordinates, ISIZE and mate related flags from a name-sorted alignment, and also sets the output format to bam. I opted to just use the defaults and did not include the flags to Remove secondary and unmapped reads (-r), Disable FR proper pair check (-p), Add template cigar ct tag (-c), Add ms (mate score) tags (-m) (These are used by markdup to select the best reads to keep), or Do not add a @PG line to the header of the output file (--no-PG). I suppose I would use the mate score tags if I used the samtools markdup tool instead of Picardtools MarkDuplicates...
+                        samtools fixmate -m -O bam ${OutputDataPath}${UniqLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sam ${OutputDataPath}${UniqLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.bam
+                        #Most subsequent tools require coordinate-sorted (instead of read name-sorted) bam files and bam files need to be indexed to facilitate their use with various tools, hence the next 2 commands.
+                        samtools sort -O bam -o ${OutputDataPath}${UniqLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sorted.bam ${OutputDataPath}${UniqLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.bam
+                        samtools index ${OutputDataPath}${UniqLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sorted.bam
+                        #Cleanup temp files
+                        rm ${OutputDataPath}${UniqLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sam
+                        rm ${OutputDataPath}${UniqLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.bam
+                    done< UniqLibraries$Directory
+                else
+                    echo -e "No duplicate samples found. Continuing mapping pipeline."
+                    while read UniqLibraries; do
+                        File1="$UniqLibraries$QualityTrimmedReadSuffix1"
+                        File2="$UniqLibraries$QualityTrimmedReadSuffix2"
+                        echo -e "The following files are being mapped: File1 = $File1 & File2 = $File2"
+                        Read1="$InputDataPath$File1"
+                        echo -e "Files being mapped with their full paths:"
+                        echo -e "Read1 = $Read1"
+                        Read2="$InputDataPath$File2"
+                        echo -e "Read2 = $Read2"
+                        #Extract header information from fastq file
+                        header=$(less $Read1 | head -n 1)
+                        id=$(echo $header | head -n 1 | cut -f 1-4 -d":" | sed 's/@//' | sed 's/M_//g')
+                        #Run bwa-mem
+                        bwa mem -t $SLURM_CPUS_PER_TASK -R "@RG\tID:${id}\tSM:${UniqLibraries}\tLB:${Library}\tPL:${Platform}" -a -q -Y -K 80000000 $ReferenceGenome <(bzip2 -dc $Read1) <(bzip2 -dc $Read2) > "${OutputDataPath}${UniqLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sam"
+                        #"Because BWA can sometimes leave unusual FLAG information on SAM records, it is helpful when working with many tools to first clean up read pairing information and flags" #This command runs samtools fixmate, which fills in mate coordinates, ISIZE and mate related flags from a name-sorted alignment, and also sets the output format to bam. I opted to just use the defaults and did not include the flags to Remove secondary and unmapped reads (-r), Disable FR proper pair check (-p), Add template cigar ct tag (-c), or Do not add a @PG line to the header of the output file (--no-PG); in large part because I don't see these flags used, nor was I able to discern why employing these flags would be useful. Add ms (mate score) tags (-m) (These are used by markdup to select the best reads to keep),I suppose I would use the mate score tags if I used the samtools markdup tool instead of Picardtools MarkDuplicates...
+                        samtools fixmate -m -O bam ${OutputDataPath}${UniqLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sam ${OutputDataPath}${UniqLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.bam
+                        #Most subsequent tools require coordinate-sorted (instead of read name-sorted) bam files and bam files need to be indexed to facilitate their use with various tools, hence the next 2 commands.
+                        samtools sort -O bam -o ${OutputDataPath}${UniqLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sorted.bam ${OutputDataPath}${UniqLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.bam
+                        samtools index ${OutputDataPath}${UniqLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sorted.bam
+                        #Cleanup temp files
+                        rm ${OutputDataPath}${UniqLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sam
+                        rm ${OutputDataPath}${UniqLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.bam
+                    done< UniqLibraries$Directory
+                fi
 #Map input files to specified reference. Parameters include using 24 threads (or however many CPUs were requested in the slurm job script), the read group header line for the output SAM file (includes the sequencing instrument ID:run number on the instrument:flow cell ID from the header of the fastq files as the unique read group identifier; the root sample name of the sample that was sequenced; an identifier signifying the library batch the sequence was derived from; and the sequencing platform that generated this data), including alignments for single-end/unpaired paired-end reads so as not to discard any data, (but they will be flagged as secondary alignments), (want to use flag -C here to appending the barcode to the SAM file but is formatted incorrectly so as to lead to incorrect SAM output; need to figure out how to fix and e.g., make header in sam format with cs:Z: prefix; have removed flag for now), and mark shorter split hits as secondary for Picard tools compatibility. Then the prefix of the indexed genome is specified, followed by the R1 and R2 filenames to be mapped (specifying that they should be decompressed from bzip2 format to the standard output so the reads can be mapped by bwa) and the desired output filename. 
 
 #Other parameters left as default (mostly because I don't have any understanding of if it is worthwhile or better to tune any of these parameters, and Heng Li is a pretty smart dude!) include: the minimum seed length of 19, band with of 100,Off-diagonal dropoff of 100, re-seeding value of 1.5, discard an alignment if it occurs more than 500 times in the genome, Drop chains shorter than 0.5 of the longest overlapping chain, perform at most 50 rounds of mate-SW, drop a chain if the number of bases in seeds is smaller than 0.  This option is primarily used for longer contigs/reads. When positive, it  also  affects seed filtering; did not use -P flag to rescue missing hits/ignore hits that fit a proper pair, default matching score of 1, default mismatch penalty of 4, default Gap open penalty of 6, default gap extension penalty of 1, clipping penalty of 5, unpaired read pair penalty of 17, did not use -p flag as input files are not interleaved, I didn't use the -q flag, which doesn't reduce the mapping quality of split alignment of lower alignment score, I didn't use the -5 flag which For split alignment, mark the segment with the smallest coordinate as the primary. It automatically applies option -q as well. This option  may  help  some Hi-C pipelines. By default, BWA-MEM marks highest scoring segment as primary; I didn't use the -T flag for not including alignment in output if it has a mapping quality score below 30 (this flag has no effect on paired end reads anyway apparently); I didn't use the -j flag which treats ALT contigs as part of the primary assembly (i.e. ignore the db.prefix.alt file); I didn't use the -h flag INT[,INT2] where if a query has not more than [5200] hits with score higher than 80% of the best hit, output them all in the XA tag. If INT2 is specified, BWA-MEM outputs up to INT2 hits if the list contains a hit to an ALT contig. [5,200]; I left hard clipping in place for the supplementary mappings, verbosity is what it is (all normal messages)!, and I didn't specify -I FLOAT[,FLOAT[,INT[,INT]], which specifies the mean, standard deviation (10% of the mean if absent), max (4 sigma from the mean if absent) and min (4 sigma if absent) of the insert size distribution. Only applicable to the FR orientation. By default, BWA-MEM infers these numbers and the pair orientations given enough reads. [inferred]
@@ -88,58 +155,121 @@ if [ $ReferenceGenome == "GECOSparrowSpecies" ]; then
 ##      MinQuality: 0
       # Filter reads that did not map to the reference sequence
 ##      FilterUnmappedReads: yes
-#Extract header information from fastq file
-               
-                    header=$(less $Read1 | head -n 1)
-                    id=$(echo $header | head -n 1 | cut -f 1-4 -d":" | sed 's/@//' | sed 's/M_//g')
-                    bwa mem -t $SLURM_CPUS_PER_TASK -R "@RG\tID:${id}\tSM:${UniqRootName}\tLB:${Library}\tPL:${Platform}" -M -K 80000000 $ReferenceGenome <(bzip2 -dc $Read1) <(bzip2 -dc $Read2) > "${UniqRootName}_trimmed-bwamem-$ReferenceGenomeSuffix.sam"
-     #"Because BWA can sometimes leave unusual FLAG information on SAM records, it is helpful when working with many tools to first clean up read pairing information and flags" 
-     #This command runs samtools fixmate, which fills in mate coordinates, ISIZE and mate related flags from a name-sorted alignment, and also sets the output format to bam. I opted to just use the defaults and did not include the flags to Remove secondary and unmapped reads (-r), Disable FR proper pair check (-p), Add template cigar ct tag (-c), Add ms (mate score) tags (-m) (These are used by markdup to select the best reads to keep), or Do not add a @PG line to the header of the output file (--no-PG). I suppose I would use the mate score tags if I used the samtools markdup tool instead of Picardtools MarkDuplicates...
-                    samtools fixmate -O bam ${UniqRootName}_trimmed-bwamem-$ReferenceGenomeSuffix.sam ${UniqRootName}_trimmed-bwamem-$ReferenceGenomeSuffix.bam
-     #Most subsequent tools require coordinate-sorted (instead of read name-sorted) bam files and bam files need to be indexed to facilitate their use with various tools, hence the next 2 commands.
-                    samtools sort -O bam -o ${UniqRootName}_trimmed-bwamem-$ReferenceGenomeSuffix.sorted.bam ${UniqRootName}_trimmed-bwamem-$ReferenceGenomeSuffix.bam
-                    samtools index ${UniqRootName}_trimmed-bwamem-$ReferenceGenomeSuffix.sorted.bam
-     #Cleanup temp files
-                    rm ${UniqRootName}_trimmed-bwamem-$ReferenceGenomeSuffix.sam
-                    rm ${UniqRootName}_trimmed-bwamem-$ReferenceGenomeSuffix.bam
-               done< $value"UniqRootName"
+
           else
                echo -e "No $value samples found."
           fi
      done
+ #Clean up temp files
+     ##rm RootName
+     ##rm *UniqRootName
+     ##rm DuplicateLibraries UniqLibraries
+     ##rm ExistingMappedReads FutureMappedSamples
 else
      echo -e "Mapping samples to $ReferenceGenomeSuffix genome."
 #Map reads to reference genome
-     while read UniqRootName; do
-          File1="$UniqRootName$QualityTrimmedReadSuffix1"
-          File2="$UniqRootName$QualityTrimmedReadSuffix2"
-          echo $File1
-          Read1="$InputDataPath$File1"
-          echo $Read1
-          Read2="$InputDataPath$File2"
-          echo $Read2
-#Map input files to specified reference. Parameters include using 24 threads, smart pairing (If two adjacent reads have the same name, they are considered to form a read pair. This way, paired-end and single-end reads can be mixed in a single FASTA/Q stream), the read group header line for the output SAM file (includes the sequencing instrument ID:run number on the instrument:flow cell ID from the header of the fastq files as the unique read group identifier; the root sample name of the sample that was sequenced; an identifier signifying the library batch the sequence was derived from; and the sequencing platform that generated this data), including alignments for single-end/unpaired paired-end reads so as not to discard any data, (but they will be flagged as secondary alignments), (want to use flag -C here to appending the barcode to the SAM file but is formatted incorrectly so as to lead to incorrect SAM output; need to figure out how to fix and e.g., make header in sam format with cs:Z: prefix; have removed flag for now), and mark shorter split hits as secondary for Picard tools compatibility. Then the prefix of the indexed genome is specified, followed by the R1 and R2 filenames to be mapped (specifying that they should be decompressed from bzip2 format to the standard output so the reads can be mapped by bwa) and the desired output filename. 
+cd $OutputDataPath
+#Create a list of files to be processed
+    Directory=$(echo $InputDataPath | rev | cut -d'/' -f 2 | rev)
+    ls $InputDataPath*$QualityTrimmedReadSuffix > FilesToProcess$Directory
+    sed -i 's,'"$InputDataPath"',,g' FilesToProcess$Directory
 
-#Parameters left as default (mostly because I don't have any understanding of if it is worthwhile or better to tune any of these parameters, and Heng Li is a pretty smart dude!) include: the minimum seed length of 19, band with of 100,Off-diagonal dropoff of 100, re-seeding value of 1.5, discard an alignment if it occurs more than 10000 times in the genome, did not use -P flag to rescue missing hits/ignore hits that fit a proper pair, default matching score of 1, default mismatch penalty of 4, default Gap open penalty of 6, default gap extension penalty of 1, clipping penalty of 5, unpaired read pair penalty of 9, did not use -p flag as input files are not interleaved, not including alignment in output if it has a mapping quality score below 30, leaving soft clipping in place, verbosity is what it is!
-            #Extract header information from fastq file
-                    header=$(less $Read1 | head -n 1)
-                    id=$(echo $header | head -n 1 | cut -f 1-4 -d":" | sed 's/@//' | sed 's/M_//g')
-            #Map reads to the reference genome
-                    bwa mem -t $SLURM_CPUS_PER_TASK -R "@RG\tID:${id}\tSM:${UniqRootName}\tLB:${Library}\tPL:${Platform}" -a -q -k 11 -M -K 80000000 $ReferenceGenome <(bzip2 -dc $Read1) <(bzip2 -dc $Read2) > "${UniqRootName}_trimmed-bwamem-$ReferenceGenomeSuffix.sam"
-     #"Because BWA can sometimes leave unusual FLAG information on SAM records, it is helpful when working with many tools to first clean up read pairing information and flags" 
-     #This command runs samtools fixmate, which fills in mate coordinates, ISIZE and mate related flags from a name-sorted alignment, and also sets the output format to bam. I opted to just use the defaults and did not include the flags to Remove secondary and unmapped reads (-r), Disable FR proper pair check (-p), Add template cigar ct tag (-c), Add ms (mate score) tags (-m) (These are used by markdup to select the best reads to keep), or Do not add a @PG line to the header of the output file (--no-PG). I suppose I would use the mate score tags if I used the samtools markdup tool instead of Picardtools MarkDuplicates...
-     samtools fixmate -O bam ${UniqRootName}_trimmed-bwamem-$ReferenceGenomeSuffix.sam ${UniqRootName}_trimmed-bwamem-$ReferenceGenomeSuffix.bam
-     #Most subsequent tools require coordinate-sorted (instead of read name-sorted) bam files and bam files need to be indexed to facilitate their use with various tools, hence the next 2 commands.
-     samtools sort -O bam -o ${UniqRootName}_trimmed-bwamem-$ReferenceGenomeSuffix.sorted.bam ${UniqRootName}_trimmed-bwamem-$ReferenceGenomeSuffix.bam
-     samtools index ${UniqRootName}_trimmed-bwamem-$ReferenceGenomeSuffix.sorted.bam
-     #Cleanup temp files
-     rm ${UniqRootName}_trimmed-bwamem-$ReferenceGenomeSuffix.sam
-     rm ${UniqRootName}_trimmed-bwamem-$ReferenceGenomeSuffix.bam
-done< UniqRootName
+    #Create a root name list
+    cut -d"." -f1 FilesToProcess$Directory > RootName$Directory
+    sort RootName$Directory | uniq > UniqRootName$Directory
+                echo -e "Target reference genome is $ReferenceGenome"
+                echo -e "Output data path is $OutputDataPath"
+                echo -e "Checking if samples already exist."
+                ls ${OutputDataPath}*sorted.bam > ExistingMappedReads$Directory
+                sed -i 's,'"$OutputDataPath"',,g' ExistingMappedReads$Directory
+                sed -i 's,'"_trimmed-bwamem-$ReferenceGenomeSuffix.sorted.bam"',,g' ExistingMappedReads$Directory
+                cat UniqRootName$Directory ExistingMappedReads$Directory > FutureMappedSamples$Directory
+                sort FutureMappedSamples$Directory | uniq -d > DuplicateLibraries$Directory
+                comm -23 UniqRootName$Directory DuplicateLibraries$Directory > UniqLibraries$Directory
+                
+                if [ `wc -l "DuplicateLibraries"$Directory | awk '{print $1}'` -ge "1" ]; then
+                    echo -e "Duplicate samples already exist. Assuming the duplicates are from separate libraries or sequencing runs and will merge mapped bams from the same individual"
+                    mkdir -p $OutputDataPath/temp
+        
+                    while read DuplicateLibraries; do
+                        File1="$DuplicateLibraries$QualityTrimmedReadSuffix1"
+                        File2="$DuplicateLibraries$QualityTrimmedReadSuffix2"
+                        echo -e "The following files are being mapped: File1 = $File1 & File2 = $File2"
+                        Read1="$InputDataPath$File1"
+                        echo -e "Files being mapped with their full paths:"
+                        echo -e "Read1 = $Read1"
+                        Read2="$InputDataPath$File2"
+                        echo -e "Read2 = $Read2"
+                        header=$(less $Read1 | head -n 1)
+                        id=$(echo $header | head -n 1 | cut -f 1-4 -d":" | sed 's/@//' | sed 's/M_//g')
+                        bwa mem -t $SLURM_CPUS_PER_TASK -R "@RG\tID:${id}\tSM:${DuplicateLibraries}\tLB:${Library}\tPL:${Platform}" -a -q -Y -K 80000000 $ReferenceGenome <(bzip2 -dc $Read1) <(bzip2 -dc $Read2) > "${OutputDataPath}"temp/"${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sam"
+                        samtools fixmate -m -O bam ${OutputDataPath}"temp/"${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sam ${OutputDataPath}"temp/"${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.bam
+                        #Most subsequent tools require coordinate-sorted (instead of read name-sorted) bam files and bam files need to be indexed to facilitate their use with various tools, hence the next 2 commands.
+                        samtools sort -O bam -o ${OutputDataPath}"temp/"${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sorted.bam ${OutputDataPath}"temp/"${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.bam
+                        samtools index ${OutputDataPath}"temp/"${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sorted.bam
+                        #Merge duplicate bam files, re-sort the merged bam file and index the new merged bam file.
+                        samtools merge ${OutputDataPath}${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.merged.bam ${OutputDataPath}${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sorted.bam ${OutputDataPath}"temp/"${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sorted.bam
+                        samtools sort -O bam -o ${OutputDataPath}${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.merged.sorted.bam ${OutputDataPath}${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.merged.bam
+                        samtools index ${OutputDataPath}${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.merged.sorted.bam
+                        #Cleanup temp files
+                        rm ${OutputDataPath}"temp/"${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sam
+                        rm ${OutputDataPath}"temp/"${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.bam
+                        ##rm ${OutputDataPath}${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sorted.bam 
+                        ##rm ${OutputDataPath}"temp/"${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sorted.bam
+                        rm ${OutputDataPath}${DuplicateLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.merged.bam
+                    done< DuplicateLibraries$Directory
+
+                    while read UniqLibraries; do
+                        File1="$UniqLibraries$QualityTrimmedReadSuffix1"
+                        File2="$UniqLibraries$QualityTrimmedReadSuffix2"
+                        echo -e "The following files are being mapped: File1 = $File1 & File2 = $File2"
+                        Read1="$InputDataPath$File1"
+                        echo -e "Files being mapped with their full paths:"
+                        echo -e "Read1 = $Read1"
+                        Read2="$InputDataPath$File2"
+                        echo -e "Read2 = $Read2"
+                        header=$(less $Read1 | head -n 1)
+                        id=$(echo $header | head -n 1 | cut -f 1-4 -d":" | sed 's/@//' | sed 's/M_//g')
+                        bwa mem -t $SLURM_CPUS_PER_TASK -R "@RG\tID:${id}\tSM:${UniqLibraries}\tLB:${Library}\tPL:${Platform}" -a -q -Y -K 80000000 $ReferenceGenome <(bzip2 -dc $Read1) <(bzip2 -dc $Read2) > "${OutputDataPath}${UniqLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sam"
+                        samtools fixmate -m -O bam ${OutputDataPath}${UniqLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sam ${OutputDataPath}${UniqLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.bam
+                        #Most subsequent tools require coordinate-sorted (instead of read name-sorted) bam files and bam files need to be indexed to facilitate their use with various tools, hence the next 2 commands.
+                        samtools sort -O bam -o ${OutputDataPath}${UniqLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sorted.bam ${OutputDataPath}${UniqLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.bam
+                        samtools index ${OutputDataPath}${UniqLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sorted.bam
+                        #Cleanup temp files
+                        rm ${OutputDataPath}${UniqLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sam
+                        rm ${OutputDataPath}${UniqLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.bam
+                    done< UniqLibraries$Directory
+                else
+                    echo -e "No duplicate samples found. Continuing mapping pipeline."
+                    while read UniqLibraries; do
+                        File1="$UniqLibraries$QualityTrimmedReadSuffix1"
+                        File2="$UniqLibraries$QualityTrimmedReadSuffix2"
+                        echo -e "The following files are being mapped: File1 = $File1 & File2 = $File2"
+                        Read1="$InputDataPath$File1"
+                        echo -e "Files being mapped with their full paths:"
+                        echo -e "Read1 = $Read1"
+                        Read2="$InputDataPath$File2"
+                        echo -e "Read2 = $Read2"
+                        #Extract header information from fastq file
+                        header=$(less $Read1 | head -n 1)
+                        id=$(echo $header | head -n 1 | cut -f 1-4 -d":" | sed 's/@//' | sed 's/M_//g')
+                        bwa mem -t $SLURM_CPUS_PER_TASK -R "@RG\tID:${id}\tSM:${UniqLibraries}\tLB:${Library}\tPL:${Platform}" -a -q -Y -K 80000000 $ReferenceGenome <(bzip2 -dc $Read1) <(bzip2 -dc $Read2) > "${OutputDataPath}${UniqLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sam"
+                        #"Because BWA can sometimes leave unusual FLAG information on SAM records, it is helpful when working with many tools to first clean up read pairing information and flags" #This command runs samtools fixmate, which fills in mate coordinates, ISIZE and mate related flags from a name-sorted alignment, and also sets the output format to bam. I opted to just use the defaults and did not include the flags to Remove secondary and unmapped reads (-r), Disable FR proper pair check (-p), Add template cigar ct tag (-c), Add ms (mate score) tags (-m) (These are used by markdup to select the best reads to keep), or Do not add a @PG line to the header of the output file (--no-PG). I suppose I would use the mate score tags if I used the samtools markdup tool instead of Picardtools MarkDuplicates...
+                        samtools fixmate -m -O bam ${OutputDataPath}${UniqLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sam ${OutputDataPath}${UniqLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.bam
+                        #Most subsequent tools require coordinate-sorted (instead of read name-sorted) bam files and bam files need to be indexed to facilitate their use with various tools, hence the next 2 commands.
+                        samtools sort -O bam -o ${OutputDataPath}${UniqLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sorted.bam ${OutputDataPath}${UniqLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.bam
+                        samtools index ${OutputDataPath}${UniqLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sorted.bam
+                        #Cleanup temp files
+                        rm ${OutputDataPath}${UniqLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.sam
+                        rm ${OutputDataPath}${UniqLibraries}_trimmed-bwamem-$ReferenceGenomeSuffix.bam
+                    done< UniqLibraries$Directory
+                fi
+     #Clean up temp files
+     ##rm RootName
+     ##rm UniqRootName
+     ##rm DuplicateLibraries UniqLibraries
+     ##rm ExistingMappedReads FutureMappedSamples
 fi
-
-#Clean up temp files
-rm RootName*
 
 #Run GATK Indel Realigner
 #Note that this tool requires an indexed reference genome (if it doesn't already exist, this can be generated in the linuxbrew/colsa module via e.g.,: samtools faidx GCF_000002315.6_GRCg6a_genomic.fna) and a reference sequence dictionary (if it doesn't already exist, this can be generated in the linuxbrew/colsa module via e.g.,: gatk CreateSequenceDictionary -R GCF_000002315.6_GRCg6a_genomic.fna)
@@ -183,6 +313,5 @@ module load linuxbrew/colsa
 ##/mnt/lustre/mel/leq29/BioinformaticScripts/rm *.sorted.marked.indelrealigned.bam
 ##/mnt/lustre/mel/leq29/BioinformaticScripts/rm *.sorted.indelrealigned.bam
 ##/mnt/lustre/mel/leq29/BioinformaticScripts/rm *.sorted.bam.bai
-#Also need to fix the read group/library stuff so it extracts the info from a Yaml - TODO  "Typically your reads will be supplied to you in two files written in the FASTQ format. It is particularly important to ensure that the @RG information here is correct as this information is used by later tools. The SM field must be set to the name of the sample being processed, and LB field to the library. The resulting mapped reads will be delivered to you in a mapping format known as SAM."
+#Also need to fix the read group/library stuff so it extracts the info from a Yaml 
 
-#bzip2 -dc 2631-22921_Acaudacuta_MillGutRI_20190531_trimmed-bwamem-GRCg6a.sam.bz2 | samtools fixmate -O bam - 2631-22921_Acaudacuta_MillGutRI_20190531_trimmed-bwamem-GRCg6a.bam
